@@ -17,8 +17,6 @@
   },
   "homepage": "https://github.com/prajvals/Node-Practice#readme",
   "dependencies": {
-    "express": "^4.17.3",
-    "g": "^2.0.1",
-    "nodemon": "^2.0.15"
+    "express": "^4.17.3"
   }
 }
