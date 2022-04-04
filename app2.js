@@ -23,14 +23,15 @@ app.get('/api/v1/tours/:id', (req, res) => {
   console.log(req.params);
   let particularTour;
   console.log(tourList);
-  for (const element of tourList) {
-    if (element.id === req.params.id) {
-      console.log(element.id);
-      console.log(element);
-      particularTour = element;
-      break;
-    }
-  }
+  particularTour = tourList.find((element) => element.id === req.params.id);
+  // for (const element of tourList) {
+  //   if (element.id === req.params.id) {
+  //     console.log(element.id);
+  //     console.log(element);
+  //     particularTour = element;
+  //     break;
+  //   }
+  // }
   res.status(200).json({
     particularTour,
   });
