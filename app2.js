@@ -11,15 +11,15 @@ const tourList = JSON.parse(
 // console.log(tourList);
 const portNumber = 4008;
 
-app.get('/api/v1/tours', (req, res) => {
+const getAllTours = (req, res) => {
   res.status(200).json({
     status: 'Success',
     size: Object.keys(tourList).length,
     data: [tourList],
   });
-});
+};
 
-app.get('/api/v1/tours/:id', (req, res) => {
+const getParticularTour = (req, res) => {
   req.params.id = req.params.id * 1;
   console.log(req.params);
   let particularTour;
@@ -36,9 +36,9 @@ app.get('/api/v1/tours/:id', (req, res) => {
   res.status(200).json({
     particularTour,
   });
-});
+};
 
-app.post('/api/v1/tours', (req, res) => {
+const createNewTour = (req, res) => {
   const contents = req.body;
   console.log(contents);
   fs.appendFile(
@@ -57,9 +57,9 @@ app.post('/api/v1/tours', (req, res) => {
       }
     }
   );
-});
+};
 
-app.put('/api/v1/tours/:id', (req, res) => {
+const updateTour = (req, res) => {
   const tourToChange = req.params.id * 1;
   let changeThisTour = tourList.find((element) => element.id === tourToChange);
   changeThisTour = req.body;
@@ -83,9 +83,9 @@ app.put('/api/v1/tours/:id', (req, res) => {
       }
     }
   );
-});
+};
 
-app.delete('/api/v1/tours/:id', (req, res) => {
+const deleteTour = (req, res) => {
   const id = req.params.id * 1;
   const elementToBeDeleted = tourList.find((element) => element.id === id);
   tourList.splice(id, 1);
@@ -108,7 +108,16 @@ app.delete('/api/v1/tours/:id', (req, res) => {
       }
     }
   );
-});
+};
+app.get('/api/v1/tours', getAllTours);
+
+app.get('/api/v1/tours/:id', getParticularTour);
+
+app.post('/api/v1/tours', createNewTour);
+
+app.put('/api/v1/tours/:id', updateTour);
+
+app.delete('/api/v1/tours/:id', deleteTour);
 
 app.listen(portNumber, () => {
   console.log('Yeah we are live');
