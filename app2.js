@@ -5,12 +5,15 @@ const app = express();
 
 app.use(express.json());
 console.clear();
+
+app.use((req, res, next) => {
+  console.log('Yup this is a middleware custom one');
+  next();
+});
 const tourList = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`, 'utf-8')
 );
-// console.log(tourList);
 const portNumber = 4008;
-
 const getAllTours = (req, res) => {
   res.status(200).json({
     status: 'Success',
@@ -23,7 +26,7 @@ const getParticularTour = (req, res) => {
   req.params.id = req.params.id * 1;
   console.log(req.params);
   let particularTour;
-  console.log(tourList);
+  // console.log(tourList);
   particularTour = tourList.find((element) => element.id === req.params.id);
   // for (const element of tourList) {
   //   if (element.id === req.params.id) {
@@ -109,16 +112,6 @@ const deleteTour = (req, res) => {
     }
   );
 };
-// app.get('/api/v1/tours', getAllTours);
-
-// app.get('/api/v1/tours/:id', getParticularTour);
-
-// app.post('/api/v1/tours', createNewTour);
-
-// app.put('/api/v1/tours/:id', updateTour);
-
-// app.delete('/api/v1/tours/:id', deleteTour);
-
 app.route('/api/v1/tours').get(getAllTours).post(createNewTour);
 app
   .route('/api/v1/tours/:id')
