@@ -37,6 +37,29 @@ app.get('/api/v1/tours/:id', (req, res) => {
   });
 });
 
+app.post('/api/v1/tours', (req, res) => {
+  const contents = req.body;
+  console.log(contents);
+  fs.appendFile(
+    `${__dirname}/dev-data/data/tours-simple.json`,
+    contents,
+    (err) => {
+      if (err) {
+        res.status(200).json({
+          status: 'Failed request',
+        });
+      } else {
+        res.status(200).json({
+          status: 'Request Successful',
+          data: contents,
+        });
+      }
+    }
+  );
+});
+
+
+
 app.listen(portNumber, () => {
   console.log('Yeah we are live');
 });
