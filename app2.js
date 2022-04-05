@@ -8,6 +8,7 @@ console.clear();
 const tourList = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`, 'utf-8')
 );
+// console.log(tourList);
 const portNumber = 4008;
 
 app.get('/api/v1/tours', (req, res) => {
@@ -58,7 +59,31 @@ app.post('/api/v1/tours', (req, res) => {
   );
 });
 
-
+app.put('/api/v1/tours/:id', (req, res) => {
+  const tourToChange = req.params.id * 1;
+  let changeThisTour = tourList.find((element) => element.id === tourToChange);
+  changeThisTour = req.body;
+  tourList[tourToChange] = changeThisTour;
+  fs.writeFile(
+    `${__dirname}/dev-data/data/tours-simple.json`,
+    JSON.stringify(tourList),
+    'utf-8',
+    (err) => {
+      if (err) {
+        res.status(400).json({
+          status: 'Failure',
+        });
+      } else {
+        res.status(200).json({
+          status: 'Success',
+          data: {
+            tourList,
+          },
+        });
+      }
+    }
+  );
+});
 
 app.listen(portNumber, () => {
   console.log('Yeah we are live');
