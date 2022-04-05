@@ -109,15 +109,22 @@ const deleteTour = (req, res) => {
     }
   );
 };
-app.get('/api/v1/tours', getAllTours);
+// app.get('/api/v1/tours', getAllTours);
 
-app.get('/api/v1/tours/:id', getParticularTour);
+// app.get('/api/v1/tours/:id', getParticularTour);
 
-app.post('/api/v1/tours', createNewTour);
+// app.post('/api/v1/tours', createNewTour);
 
-app.put('/api/v1/tours/:id', updateTour);
+// app.put('/api/v1/tours/:id', updateTour);
 
-app.delete('/api/v1/tours/:id', deleteTour);
+// app.delete('/api/v1/tours/:id', deleteTour);
+
+app.route('/api/v1/tours').get(getAllTours).post(createNewTour);
+app
+  .route('/api/v1/tours/:id')
+  .put(updateTour)
+  .delete(deleteTour)
+  .get(getParticularTour);
 
 app.listen(portNumber, () => {
   console.log('Yeah we are live');
