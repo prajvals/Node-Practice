@@ -3,17 +3,22 @@ const { json } = require('express/lib/response');
 const fs = require('fs');
 const app = express();
 
-app.use(express.json());
 console.clear();
 
+//MIDDLEWARE
+app.use(express.json());
 app.use((req, res, next) => {
   console.log('Yup this is a middleware custom one');
   next();
 });
+
+//GLOBAL CODE
 const tourList = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`, 'utf-8')
 );
 const portNumber = 4008;
+
+//ROUTE HANDLERS
 const getAllTours = (req, res) => {
   res.status(200).json({
     status: 'Success',
@@ -112,12 +117,42 @@ const deleteTour = (req, res) => {
     }
   );
 };
+
+const getAllUsers = (req, res) => {
+  res.status(500).json({
+    status: 'failure',
+    message: 'this route is not yet implemented',
+  });
+};
+const createNewUser = (req, res) => {
+  res.status(500).json({
+    status: 'failure',
+    message: 'this route is not yet implemented',
+  });
+};
+const deleteUser = (req, res) => {
+  res.status(500).json({
+    status: 'failure',
+    message: 'this route is not yet implemented',
+  });
+};
+const updateUser = (req, res) => {
+  res.status(500).json({
+    status: 'failure',
+    message: 'this route is not yet implemented',
+  });
+};
+
+//ROUTES
 app.route('/api/v1/tours').get(getAllTours).post(createNewTour);
 app
   .route('/api/v1/tours/:id')
   .put(updateTour)
   .delete(deleteTour)
   .get(getParticularTour);
+
+app.route('/api/v1/users').get(getAllUsers).post(createNewUser);
+app.route('/api/v1/tours/:id').put(updateUser).delete(deleteUser);
 
 app.listen(portNumber, () => {
   console.log('Yeah we are live');
