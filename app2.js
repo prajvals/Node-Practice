@@ -144,15 +144,27 @@ const updateUser = (req, res) => {
 };
 
 //ROUTES
-app.route('/api/v1/tours').get(getAllTours).post(createNewTour);
-app
-  .route('/api/v1/tours/:id')
+
+//see here we made the routers and mounted them okay
+const tourRouter = express.Router();
+const userRouter = express.Router();
+
+tourRouter.get('/', (req, res) => {
+  res.send('hi');
+});
+
+tourRouter.route('/').post(createNewTour);
+tourRouter
+  .route('/:id')
   .put(updateTour)
   .delete(deleteTour)
   .get(getParticularTour);
 
-app.route('/api/v1/users').get(getAllUsers).post(createNewUser);
-app.route('/api/v1/tours/:id').put(updateUser).delete(deleteUser);
+userRouter.route('/').get(getAllUsers).post(createNewUser);
+userRouter.route('/:id').put(updateUser).delete(deleteUser);
+
+app.use('/api/v1/tours', tourRouter);
+app.use('/api/v1/users', userRouter);
 
 app.listen(portNumber, () => {
   console.log('Yeah we are live');
