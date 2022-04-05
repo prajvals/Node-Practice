@@ -85,6 +85,31 @@ app.put('/api/v1/tours/:id', (req, res) => {
   );
 });
 
+app.delete('/api/v1/tours/:id', (req, res) => {
+  const id = req.params.id * 1;
+  const elementToBeDeleted = tourList.find((element) => element.id === id);
+  tourList.splice(id, 1);
+  fs.writeFile(
+    `${__dirname}/dev-data/data/tours-simple.json`,
+    JSON.stringify(tourList),
+    'utf-8',
+    (err) => {
+      if (err) {
+        res.status(400).json({
+          status: 'Failed request',
+        });
+      } else {
+        res.status(200).json({
+          status: 'Success',
+          data: {
+            tourList,
+          },
+        });
+      }
+    }
+  );
+});
+
 app.listen(portNumber, () => {
   console.log('Yeah we are live');
 });
