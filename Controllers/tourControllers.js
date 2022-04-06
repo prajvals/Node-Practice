@@ -4,6 +4,16 @@ const tourList = JSON.parse(
   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`, 'utf-8')
 );
 
+exports.checkId = (req, res, next, val) => {
+  if (req.params.id * 1 > tourList.length) {
+    return res.status(200).json({
+      status: 'success',
+      message: 'hello',
+    });
+  }
+  next();
+};
+
 //ROUTE HANDLERS
 exports.getAllTours = (req, res) => {
   res.status(200).json({
