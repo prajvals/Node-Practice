@@ -15,3 +15,5 @@ app.use('/api/v1/users', userRouter);
 app.listen(portNumber, () => {
   console.log('Yeah we are live');
 });
+
+module.exports = app;
