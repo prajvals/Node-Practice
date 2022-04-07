@@ -44,10 +44,10 @@ exports.getParticularTour = (req, res) => {
 
 exports.createNewTour = (req, res) => {
   const contents = req.body;
-  console.log(contents);
+  // console.log(contents);
   fs.appendFile(
-    `${__dirname}/dev-data/data/tours-simple.json`,
-    contents,
+    `${__dirname}/../dev-data/data/tours-simple.json`,
+    JSON.stringify(contents),
     (err) => {
       if (err) {
         res.status(200).json({

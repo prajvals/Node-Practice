@@ -18,7 +18,9 @@
   },
   "homepage": "https://github.com/prajvals/Node-Practice#readme",
   "dependencies": {
+    "dotenv": "^16.0.0",
     "express": "^4.17.3",
+    "mongoose": "^5.13.14",
     "morgan": "^1.10.0"
   },
   "devDependencies": {

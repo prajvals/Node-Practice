@@ -5,13 +5,29 @@ const tourController = require('./../Controllers/tourControllers');
 router.param('id', tourController.checkId);
 
 router.use((req, res, next) => {
+  console.log('Yes');
+  next();
+});
+
+router.use('/v1', (req, res, next) => {
   console.log('Just to check ');
   next();
 });
 
+const checkdata = (req, res, next) => {
+  if (req.body.hasOwnProperty('name') && req.body.hasOwnProperty('price')) {
+    console.log('Yes condition satisfied');
+    next();
+  } else {
+    return res.status(400).json({
+      status: 'Failed',
+      message: 'Name or Price is missing',
+    });
+  }
+};
 router
   .route('/')
-  .post(tourController.createNewTour)
+  .post(checkdata, tourController.createNewTour)
   .get(tourController.getAllTours);
 router
   .route('/:id')
