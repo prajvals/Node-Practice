@@ -20,8 +20,8 @@ mongoose
     useFindAndModify: false,
   })
   .then((connection) => {
-    console.log(connection);
-    console.log('hello');
+    // console.log(connection);
+    console.log('db connected successfully');
   });
 
 const portNumber = process.env.PORT;
