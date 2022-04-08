@@ -32,21 +32,41 @@ exports.getParticularTour = (req, res) => {
 
 exports.createNewTour = async (req, res) => {
   const contents = req.body;
-  try {
-    const newTour = await tourModel.create(contents);
+  tourModel
+    .create(contents)
+    .then((data) => {
+      res.status(200).json({
+        status: 'Success',
+        data: {
+          data,
+        },
+      });
+    })
+    .catch((err) => {
+      res.status(200).json({
+        status: 'fail',
+        data: {
+          data,
+        },
+      });
+    });
+  // try {
+  //   const newTour = await tourModel.create(contents);
+  //   res.status(200).json({
+  //     status: 'Success',
+  //     data: {
+  //       newTour,
+  //     },
+  //   });
+  // } catch (err) {
+  //   res.status(400).json({
+  //     status: 'fail',
+  //     message: 'Please Send proper data',
+  //   });
+  // }
 
-    res.status(200).json({
-      status: 'Success',
-      data: {
-        newTour,
-      },
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: 'fail',
-      message: 'Please Send proper data',
-    });
-  }
+  //see what it returns in async await is what it passes as the response data in
+  //.then() alright
 };
 
 exports.updateTour = (req, res) => {};
