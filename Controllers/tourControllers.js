@@ -21,7 +21,7 @@ exports.getAllTours = (req, res) => {
 };
 
 exports.getParticularTour = (req, res) => {
-  req.params.id 
+  req.params.id;
   console.log(req.params.id);
   tourModel
     .findById(req.params.id)
@@ -31,7 +31,7 @@ exports.getParticularTour = (req, res) => {
       });
     })
     .catch((err) => {
-      console.log(err)
+      console.log(err);
       res.status(400).json({
         status: 'fail',
         message: 'Improper request',
@@ -88,6 +88,37 @@ exports.createNewTour = async (req, res) => {
   //.then() alright
 };
 
-exports.updateTour = (req, res) => {};
+exports.updateTour = (req, res) => {
+  tourModel
+    .findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    })
+    .then((data) => {
+      res.status(200).json({
+        data,
+      });
+    })
+    .catch((err) => {
+      console.log('Err occured');
+      console.log(err);
+      res.status(400).json({
+        err,
+      });
+    });
+};
 
-exports.deleteTour = (req, res) => {};
+exports.deleteTour = (req, res) => {
+  tourModel
+    .findByIdAndDelete(req.params.id)
+    .then((data) => {
+      res.status(204).json({
+        data: null,
+      });
+    })
+    .catch((err) => {
+      res.status(400).json({
+        err,
+      });
+    }); 
+};

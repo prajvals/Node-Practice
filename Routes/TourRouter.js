@@ -31,7 +31,7 @@ router
   .get(tourController.getAllTours);
 router
   .route('/:id')
-  .put(tourController.updateTour)
+  .patch(tourController.updateTour)
   .delete(tourController.deleteTour)
   .get(tourController.getParticularTour);
 
