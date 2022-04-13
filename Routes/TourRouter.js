@@ -27,7 +27,7 @@ const checkdata = (req, res, next) => {
 };
 router
   .route('/')
-  .post(checkdata, tourController.createNewTour)
+  .post(tourController.createNewTour)
   .get(tourController.getAllTours);
 router
   .route('/:id')

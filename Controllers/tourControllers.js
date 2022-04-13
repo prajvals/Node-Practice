@@ -2,6 +2,15 @@ const tourModel = require('./../Models/TourModel');
 
 //ROUTE HANDLERS
 exports.getAllTours = (req, res) => {
+  tourModel.find().then((data) => {
+    res.status(200).json({
+      status: 'Success',
+      size: data.size,
+      data: {
+        data,
+      },
+    });
+  });
   // tourModel.find((res) => {
   //   res.status(200).json({
   //     status: 'Success',
@@ -12,9 +21,24 @@ exports.getAllTours = (req, res) => {
 };
 
 exports.getParticularTour = (req, res) => {
-  req.params.id = req.params.id * 1;
-  console.log(req.params);
-  let particularTour;
+  req.params.id 
+  console.log(req.params.id);
+  tourModel
+    .findById(req.params.id)
+    .then((data) => {
+      res.status(200).json({
+        data,
+      });
+    })
+    .catch((err) => {
+      console.log(err)
+      res.status(400).json({
+        status: 'fail',
+        message: 'Improper request',
+      });
+    });
+  // console.log(req.params);
+  // let particularTour;
   // console.log(tourList);
   // particularTour = tourList.find((element) => element.id === req.params.id);
   // // for (const element of tourList) {
@@ -25,9 +49,6 @@ exports.getParticularTour = (req, res) => {
   //     break;
   //   }
   // }
-  res.status(200).json({
-    particularTour,
-  });
 };
 
 exports.createNewTour = async (req, res) => {
@@ -45,9 +66,7 @@ exports.createNewTour = async (req, res) => {
     .catch((err) => {
       res.status(200).json({
         status: 'fail',
-        data: {
-          data,
-        },
+        message: 'Something went wrong',
       });
     });
   // try {
