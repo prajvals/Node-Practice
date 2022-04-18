@@ -25,6 +25,11 @@ const checkdata = (req, res, next) => {
     });
   }
 };
+
+router
+  .route('/cheap-5-tours')
+  .get(tourController.Aliasing, tourController.getAllTours);
+
 router
   .route('/')
   .post(tourController.createNewTour)

@@ -1,5 +1,10 @@
 const tourModel = require('./../Models/TourModel');
 
+exports.Aliasing = (req, res, next) => {
+  req.query.limit = '5';
+  req.query.sort = '-ratingsAverage,price';
+  next();
+};
 //ROUTE HANDLERS
 exports.getAllTours = async (req, res) => {
   console.log(req.query);
@@ -22,7 +27,7 @@ exports.getAllTours = async (req, res) => {
   let query = tourModel.find(JSON.parse(queryString));
 
   if (req.query.sort) {
-    const sortBy = req.query.sort.split('.').join(' ');
+    const sortBy = req.query.sort.split(',').join(' ');
     query = query.sort(sortBy);
   } else {
     query = query.sort('duration');
