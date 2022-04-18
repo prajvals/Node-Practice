@@ -1,24 +1,50 @@
 const tourModel = require('./../Models/TourModel');
 
 //ROUTE HANDLERS
-exports.getAllTours = (req, res) => {
-  tourModel.find().then((data) => {
-    res.status(200).json({
-      status: 'Success',
-      size: data.size,
-      data: {
-        data,
-      },
-    });
+exports.getAllTours = async (req, res) => {
+  console.log(req.query);
+  //1. Creating the query object
+  const queryObject = { ...req.query };
+  const excludedFields = ['sort', 'page', 'limit', 'fields'];
+
+  //2. Filtering for keywords
+  excludedFields.forEach((el) => {
+    delete queryObject[el];
   });
-  // tourModel.find((res) => {
-  //   res.status(200).json({
-  //     status: 'Success',
-  //     size: res.size,
-  //     data: res,
-  //   });
-  // });
+
+  //3. filtering for mongo keywords
+  let queryString = JSON.stringify(queryObject);
+  queryString = queryString.replace(/\b(gt|gte|lt|lte)\b/g, (match) => {
+    return `$${match}`;
+  });
+
+  //apprently we cannot store a promise in a variable
+  let query = tourModel.find(JSON.parse(queryString));
+
+  if (req.query.sort) {
+    const sortBy = req.query.sort.split('.').join(' ');
+    query = query.sort(sortBy);
+  } else {
+    query = query.sort('-createdAt');
+  }
+
+  // only when we await do we say now go to background and do it
+  const tourData = await query;
+  res.status(200).json({
+    status: 'Success',
+    size: tourData.size,
+    data: {
+      tourData,
+    },
+  });
 };
+// tourModel.find((res) => {
+//   res.status(200).json({
+//     status: 'Success',
+//     size: res.size,
+//     data: res,
+//   });
+// });
 
 exports.getParticularTour = (req, res) => {
   req.params.id;
@@ -120,5 +146,5 @@ exports.deleteTour = (req, res) => {
       res.status(400).json({
         err,
       });
-    }); 
+    });
 };
