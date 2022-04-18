@@ -1,56 +1,21 @@
 const tourModel = require('./../Models/TourModel');
+const ApiFeatures = require('./../Utils/ApiFeatures');
 
 exports.Aliasing = (req, res, next) => {
   req.query.limit = '5';
   req.query.sort = '-ratingsAverage,price';
   next();
 };
+
 //ROUTE HANDLERS
 exports.getAllTours = async (req, res) => {
-  console.log(req.query);
-  //1. Creating the query object
-  const queryObject = { ...req.query };
-  const excludedFields = ['sort', 'page', 'limit', 'fields'];
+  const featureObject = new ApiFeatures(tourModel.find(), req.query)
+    .filter()
+    .paginate()
+    .fieldLimiting()
+    .sort();
 
-  //2. Filtering for keywords
-  excludedFields.forEach((el) => {
-    delete queryObject[el];
-  });
-
-  //3. filtering for mongo keywords
-  let queryString = JSON.stringify(queryObject);
-  queryString = queryString.replace(/\b(gt|gte|lt|lte)\b/g, (match) => {
-    return `$${match}`;
-  });
-
-  //apprently we cannot store a promise in a variable
-  let query = tourModel.find(JSON.parse(queryString));
-
-  if (req.query.sort) {
-    const sortBy = req.query.sort.split(',').join(' ');
-    query = query.sort(sortBy);
-  } else {
-    query = query.sort('duration');
-  }
-
-  //FEILD LIMITING
-  if (req.query.fields) {
-    const field = req.query.fields.split('.').join(' ');
-    query = query.select(field);
-  } else {
-    query = query.select('-__v');
-  }
-
-  const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || 100;
-  const skip = (page - 1) * limit;
-
-  console.log(skip);
-
-  query = query.skip(skip).limit(limit);
-
-  // only when we await do we say now go to background and do it
-  const tourData = await query;
+  const tourData = await featureObject.query;
   res.status(200).json({
     status: 'Success',
     size: tourData.size,
@@ -59,13 +24,6 @@ exports.getAllTours = async (req, res) => {
     },
   });
 };
-// tourModel.find((res) => {
-//   res.status(200).json({
-//     status: 'Success',
-//     size: res.size,
-//     data: res,
-//   });
-// });
 
 exports.getParticularTour = (req, res) => {
   req.params.id;

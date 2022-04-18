@@ -34,6 +34,7 @@ router
   .route('/')
   .post(tourController.createNewTour)
   .get(tourController.getAllTours);
+  
 router
   .route('/:id')
   .patch(tourController.updateTour)
