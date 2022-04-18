@@ -25,8 +25,24 @@ exports.getAllTours = async (req, res) => {
     const sortBy = req.query.sort.split('.').join(' ');
     query = query.sort(sortBy);
   } else {
-    query = query.sort('-createdAt');
+    query = query.sort('duration');
   }
+
+  //FEILD LIMITING
+  if (req.query.fields) {
+    const field = req.query.fields.split('.').join(' ');
+    query = query.select(field);
+  } else {
+    query = query.select('-__v');
+  }
+
+  const page = req.query.page * 1 || 1;
+  const limit = req.query.limit * 1 || 100;
+  const skip = (page - 1) * limit;
+
+  console.log(skip);
+
+  query = query.skip(skip).limit(limit);
 
   // only when we await do we say now go to background and do it
   const tourData = await query;
