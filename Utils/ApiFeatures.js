@@ -4,6 +4,7 @@ class ApiFeatures {
   //query is the obect created by tour.find() which is one of the mongose methods
   //on these mongose methods sort,select,skip,limit are available
   //and the filter function is nothing but calling find method with some parameters
+  //here we are building the query object and then using that object we are making query, by awaiting it
 
   constructor(query, queryString) {
     this.query = query;
