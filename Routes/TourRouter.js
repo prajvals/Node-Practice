@@ -30,6 +30,13 @@ router
   .route('/cheap-5-tours')
   .get(tourController.Aliasing, tourController.getAllTours);
 
+/*see the only thing that is different about this middleware is that
+  it will only run when the path matches
+  and only when its for the get method
+  we can have middlewares with use, which run for all the requests alright yeah
+  and we can have middlewares which run for only a specified path too alright yeah
+  */
+
 router
   .route('/')
   .post(tourController.createNewTour)

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 
 //you can send any other data apart from what is defined in the schema
 //but only what is defined in the schema would be the one taken up
@@ -66,8 +67,30 @@ const tourSchema = new mongoose.Schema(
     },
   }
 );
+/*virtual properties are those which are derieved from some other property already stored in the database, and hence we dont save it, rather calculate it this way
+it needs that we allow the schema properties to show virtuals in it alright yeah
+*/
 tourSchema.virtual('durationInWeeks').get(function () {
   return this.duration / 7;
 });
+/*
+Mongoose has middlewares, which we can run for specific conditions, like we have middlewares which run for specific paths, there are four types of middlewares in it actually, and what we provide in the functions is the code which is actually run
+
+so these .pre .post with hooks is just similar to paths on which to execute
+*/
+tourSchema.pre('save', function (next) {
+  this.slug = slugify(this.name, { lower: true }); //slug is the last part of the url usually used to identify the resource from it alright yeah
+  next();
+});
+
+//post is called when the data has been successfully saved in the database
+tourSchema.post('save', function (doc, next) {
+  console.log(this);
+  next();
+});
+
+//important thing to note, these are the mongoose middleware
+//they run before or after the database operations are being done or already done alright yeah
+
 const Tour = mongoose.model('Tour', tourSchema);
 module.exports = Tour;
