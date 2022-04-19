@@ -31,7 +31,7 @@ class ApiFeatures {
   }
 
   sort() {
-    if (this.query.sort) {
+    if (this.queryString.sort) {
       const sortBy = this.queryString.sort.split(',').join(' ');
       this.query = this.query.sort(sortBy);
     } else {
@@ -41,7 +41,7 @@ class ApiFeatures {
   }
 
   fieldLimiting() {
-    if (this.query.fields) {
+    if (this.queryString.fields) {
       const field = this.queryString.fields.split('.').join(' ');
       this.query = this.query.select(field);
     } else {

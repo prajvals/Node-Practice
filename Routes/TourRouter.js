@@ -37,6 +37,8 @@ router
 
 router.route('/stats').get(tourController.tourStats);
 
+router.route('/busy-Month/:year').get(tourController.getBusiestMonth);
+
 router
   .route('/:id')
   .patch(tourController.updateTour)

@@ -163,3 +163,60 @@ exports.tourStats = async (req, res) => {
     });
   }
 };
+
+exports.getBusiestMonth = async (req, res) => {
+  const year = req.params.year;
+  console.log(year);
+  try {
+    //see unwind is used to create documents out of the elements in the array alright yeah
+    //and then we have the match to get what all to show
+    //group id is used to make collections
+    //$month is an aggregation operator used to get the month
+    //in the same group, we count the number of tours
+    //and add the names in the array using push operator alright yeah
+    const busiestMonth = await tourModel.aggregate([
+      {
+        $unwind: '$startDates',
+      },
+      {
+        $match: {
+          startDates: {
+            $gte: new Date(`${year}-01-01`),
+            $lte: new Date(`${year}-12-31`),
+          },
+        },
+      },
+      {
+        $group: {
+          _id: { $month: '$startDates' },
+          numberOfTours: { $sum: 1 },
+          nameOfTours: { $push: '$name' },
+        },
+      },
+      {
+        $sort: {
+          _id: 1,
+        },
+      },
+      {
+        $addFields: {
+          month: '$_id',
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+        },
+      },
+    ]);
+    res.status(200).json({
+      status: 'Success',
+      data: busiestMonth,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'Failure',
+      data: err,
+    });
+  }
+};
