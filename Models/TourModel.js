@@ -11,11 +11,15 @@ const tourSchema = new mongoose.Schema(
     name: {
       type: String,
       required: [true, 'A tour should have a name'],
+      minlength: [10, 'A tour should have a minimum length of atleast 10'],
+      maxlength: [40, 'A tour should have a maximum length of 40'],
       unique: true,
     },
     ratingsAverage: {
       type: Number,
       default: 4.7,
+      min: [1, 'rating must be above 1'],
+      max: [5, 'rating must be below 5'],
     },
     duration: {
       type: String,
@@ -28,6 +32,10 @@ const tourSchema = new mongoose.Schema(
     difficulty: {
       type: String,
       required: [true, 'A tour must have a difficulty'],
+      enum: {
+        values: ['easy', 'medium', 'difficult'],
+        message: 'Difficult is either either easy,medium or difficult',
+      },
     },
     ratingsQuantity: {
       type: Number,
@@ -37,6 +45,15 @@ const tourSchema = new mongoose.Schema(
       type: Number,
       required: [true, 'A tour should have a price'],
     },
+    priceDiscount: {
+      type: Number,
+      validate: {
+        validator: function (val) {
+          return this.val>this.price
+        },
+        message:"Discount price cannot be more than the price itself"
+      }
+    }
     summary: {
       type: String,
       trim: true,
@@ -56,6 +73,9 @@ const tourSchema = new mongoose.Schema(
       default: Date.now(),
     },
     startDates: [Date],
+    secretTour: {
+      type: Boolean,
+    },
   },
   {
     //note we have to enable the virtual in the toJSON, these are the schema options
@@ -92,5 +112,20 @@ tourSchema.post('save', function (doc, next) {
 //important thing to note, these are the mongoose middleware
 //they run before or after the database operations are being done or already done alright yeah
 
+//QUERY MIDDLEWARES
+tourSchema.pre('/^find/', function (next) {
+  this.find({ secretTour: true }); //basically this here means query and we are chaining this find on it
+});
+
+tourSchema.post('/^find/', function (docs, next) {
+  console.log(docs);
+});
+
+//AGGREGATOR MIDDLEWARE
+tourSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+  console.log(this.pipeline());
+  next();
+});
 const Tour = mongoose.model('Tour', tourSchema);
 module.exports = Tour;
