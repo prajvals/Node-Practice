@@ -6,6 +6,8 @@ const morgan = require('morgan');
 const app = express();
 const tourRouter = require('./Routes/TourRouter');
 const userRouter = require('./Routes/UserRouter');
+const AppError = require('./Utils/AppError');
+const AppErrorController = require('./Controllers/AppErrorController');
 
 console.clear();
 console.log(process.env.NODE_ENV);
@@ -27,19 +29,11 @@ app.all('*', (req, res, next) => {
   //   status: 'Failure',
   //   message: `${req.originalUrl} is not a valid Path`,
   // });
-  const err = new Error(`cant find a particular route`);
-  err.status = 'fail';
-  err.statusCode = 404;
-  next(err);
+  // const err = new Error(`cant find a particular route`);
+  // err.status = 'fail';
+  // err.statusCode = 404;
+  next(new AppError("Can't find this particular route", 404));
 });
 
-app.use((err, req, res, next) => {
-  err.statusCode = err.statusCode || 500;
-  err.status = err.status || 'error';
-
-  res.status(err.statusCode).json({
-    status: err.status,
-    message: err.message,
-  });
-});
+app.use(AppErrorController);
 module.exports = app;
