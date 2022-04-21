@@ -49,11 +49,11 @@ const tourSchema = new mongoose.Schema(
       type: Number,
       validate: {
         validator: function (val) {
-          return this.val>this.price
+          return this.val > this.price;
         },
-        message:"Discount price cannot be more than the price itself"
-      }
-    }
+        message: 'Discount price cannot be more than the price itself',
+      },
+    },
     summary: {
       type: String,
       trim: true,
