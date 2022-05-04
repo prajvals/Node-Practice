@@ -1,5 +1,6 @@
 const tourModel = require('./../Models/TourModel');
 const ApiFeatures = require('./../Utils/ApiFeatures');
+const catchAsync = require('./../Utils/catchAsync');
 
 exports.Aliasing = (req, res, next) => {
   req.query.limit = '5';
@@ -8,7 +9,7 @@ exports.Aliasing = (req, res, next) => {
 };
 
 //ROUTE HANDLERS
-exports.getAllTours = async (req, res) => {
+exports.getAllTours = catchAsync(async (req, res) => {
   const featureObject = new ApiFeatures(tourModel.find(), req.query)
     .filter()
     .paginate()
@@ -24,9 +25,9 @@ exports.getAllTours = async (req, res) => {
       tourData,
     },
   });
-};
+});
 
-exports.getParticularTour = async (req, res) => {
+exports.getParticularTour = catchAsync(async (req, res) => {
   const data = await tourModel.findById(req.params.id);
 
   res.status((data) => {
@@ -61,14 +62,8 @@ exports.getParticularTour = async (req, res) => {
   //     break;
   //   }
   // }
-};
+});
 
-const catchAsync = (fn) => {
-  return (req, res, next) => {
-    fn(req, res, next).catch(next);
-  };
-  // fn(req, res, next).catch((err) => console.log('error occured'));
-};
 /*
 okay this needs a lil bit of more attention 
 1. see when we are creating a global exception handler, we want to pass all the exceptions to it only right 
@@ -128,7 +123,7 @@ exports.createNewTour = catchAsync(async (req, res, next) => {
   //.then() alright
 });
 
-exports.updateTour = async (req, res) => {
+exports.updateTour = catchAsync (async (req, res) => {
   const data = await tourModel.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
@@ -149,9 +144,9 @@ exports.updateTour = async (req, res) => {
   //     err,
   //   });
   // });
-};
+});
 
-exports.deleteTour = async (req, res) => {
+exports.deleteTour = catchAsync (async (req, res) => {
   const data = await tourModel.findByIdAndDelete(req.params.id);
 
   res.status(200).json({
@@ -168,10 +163,10 @@ exports.deleteTour = async (req, res) => {
   //     err,
   //   });
   // });
-};
+});
 
-exports.tourStats = async (req, res) => {
-  try {
+exports.tourStats = catchAsync(async (req, res) => {
+
     const stats = await tourModel.aggregate([
       {
         $match: { ratingsAverage: { $gte: 4.5 } },
@@ -198,18 +193,11 @@ exports.tourStats = async (req, res) => {
     res.status(200).json({
       data: stats,
     });
-  } catch (err) {
-    res.status(404).json({
-      status: 'fail',
-      data: err,
-    });
-  }
-};
+});
 
-exports.getBusiestMonth = async (req, res) => {
+exports.getBusiestMonth = catchAsync(async (req, res) => {
   const year = req.params.year;
   console.log(year);
-  try {
     //see unwind is used to create documents out of the elements in the array alright yeah
     //and then we have the match to get what all to show
     //group id is used to make collections
@@ -255,10 +243,4 @@ exports.getBusiestMonth = async (req, res) => {
       status: 'Success',
       data: busiestMonth,
     });
-  } catch (err) {
-    res.status(400).json({
-      status: 'Failure',
-      data: err,
-    });
-  }
-};
+});
