@@ -7,7 +7,7 @@ const app = express();
 const tourRouter = require('./Routes/TourRouter');
 const userRouter = require('./Routes/UserRouter');
 const AppError = require('./Utils/AppError');
-const AppErrorController = require('./Controllers/AppErrorController');
+const globalErrorHandler = require('./Controllers/AppErrorController');
 
 console.clear();
 console.log(process.env.NODE_ENV);
@@ -23,6 +23,7 @@ app.use('/api/v1/users', userRouter);
 //app.all is used for routeHandlers
 //app.all does exact route matching alright yeah
 //app.all can filter different types of requests and can send such responses alright yeah
+//app.all is used to capture all the verbs
 
 app.all('*', (req, res, next) => {
   // res.status(404).json({
@@ -35,5 +36,6 @@ app.all('*', (req, res, next) => {
   next(new AppError("Can't find this particular route", 404));
 });
 
-app.use(AppErrorController);
+app.use(globalErrorHandler);
+
 module.exports = app;

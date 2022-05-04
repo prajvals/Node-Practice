@@ -16,6 +16,7 @@ exports.getAllTours = async (req, res) => {
     .sort();
 
   const tourData = await featureObject.query;
+
   res.status(200).json({
     status: 'Success',
     size: tourData.size,
@@ -25,23 +26,29 @@ exports.getAllTours = async (req, res) => {
   });
 };
 
-exports.getParticularTour = (req, res) => {
-  req.params.id;
-  console.log(req.params.id);
-  tourModel
-    .findById(req.params.id)
-    .then((data) => {
-      res.status(200).json({
-        data,
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(400).json({
-        status: 'fail',
-        message: 'Improper request',
-      });
+exports.getParticularTour = async (req, res) => {
+  const data = await tourModel.findById(req.params.id);
+
+  res.status((data) => {
+    res.status(200).json({
+      data,
     });
+  });
+
+  // .then((data) => {
+  //   res.status(200).json({
+  //     data,
+  //   });
+  // })
+
+  // .catch((err) => {
+  //   console.log(err);
+  //   res.status(400).json({
+  //     status: 'fail',
+  //     message: 'Improper request',
+  //   });
+  // });
+
   // console.log(req.params);
   // let particularTour;
   // console.log(tourList);
@@ -58,22 +65,26 @@ exports.getParticularTour = (req, res) => {
 
 exports.createNewTour = async (req, res) => {
   const contents = req.body;
-  tourModel
-    .create(contents)
-    .then((data) => {
-      res.status(200).json({
-        status: 'Success',
-        data: {
-          data,
-        },
-      });
-    })
-    .catch((err) => {
-      res.status(200).json({
-        status: 'fail',
-        message: 'Something went wrong',
-      });
-    });
+  const data = await tourModel.create(contents);
+
+  res.status(200).json({
+    status: 'Success',
+    data,
+  });
+  // .then((data) => {
+  //   res.status(200).json({
+  //     status: 'Success',
+  //     data: {
+  //       data,
+  //     },
+  //   });
+  // })
+  // .catch((err) => {
+  //   res.status(200).json({
+  //     status: 'fail',
+  //     message: 'Something went wrong',
+  //   });
+  // });
   // try {
   //   const newTour = await tourModel.create(contents);
   //   res.status(200).json({
@@ -93,39 +104,46 @@ exports.createNewTour = async (req, res) => {
   //.then() alright
 };
 
-exports.updateTour = (req, res) => {
-  tourModel
-    .findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    })
-    .then((data) => {
-      res.status(200).json({
-        data,
-      });
-    })
-    .catch((err) => {
-      console.log('Err occured');
-      console.log(err);
-      res.status(400).json({
-        err,
-      });
-    });
+exports.updateTour = async (req, res) => {
+  const data = await tourModel.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    data,
+  });
+  // .then((data) => {
+  //   res.status(200).json({
+  //     data,
+  //   });
+  // })
+  // .catch((err) => {
+  //   console.log('Err occured');
+  //   console.log(err);
+  //   res.status(400).json({
+  //     err,
+  //   });
+  // });
 };
 
-exports.deleteTour = (req, res) => {
-  tourModel
-    .findByIdAndDelete(req.params.id)
-    .then((data) => {
-      res.status(204).json({
-        data: null,
-      });
-    })
-    .catch((err) => {
-      res.status(400).json({
-        err,
-      });
-    });
+exports.deleteTour = async (req, res) => {
+  const data = await tourModel.findByIdAndDelete(req.params.id);
+
+  res.status(200).json({
+    status: 'Success',
+    data,
+  });
+  // .then((data) => {
+  //   res.status(204).json({
+  //     data: null,
+  //   });
+  // })
+  // .catch((err) => {
+  //   res.status(400).json({
+  //     err,
+  //   });
+  // });
 };
 
 exports.tourStats = async (req, res) => {
