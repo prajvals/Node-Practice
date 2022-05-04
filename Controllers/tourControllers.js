@@ -1,6 +1,7 @@
 const tourModel = require('./../Models/TourModel');
 const ApiFeatures = require('./../Utils/ApiFeatures');
 const catchAsync = require('./../Utils/catchAsync');
+const AppError = require('./../Utils/AppError');
 
 exports.Aliasing = (req, res, next) => {
   req.query.limit = '5';
@@ -30,6 +31,9 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 exports.getParticularTour = catchAsync(async (req, res, next) => {
   const data = await tourModel.findById(req.params.id);
 
+  if (!data) {
+    return next(AppError('No tour found with this record'));
+  }
   res.status((data) => {
     res.status(200).json({
       data,
@@ -129,6 +133,10 @@ exports.updateTour = catchAsync(async (req, res, next) => {
     runValidators: true,
   });
 
+  if (!data) {
+    return next(AppError('No tour found with this record'));
+  }
+
   res.status(200).json({
     data,
   });
@@ -149,6 +157,9 @@ exports.updateTour = catchAsync(async (req, res, next) => {
 exports.deleteTour = catchAsync(async (req, res, next) => {
   const data = await tourModel.findByIdAndDelete(req.params.id);
 
+  if (!data) {
+    return next(AppError('No tour found with this record'));
+  }
   res.status(200).json({
     status: 'Success',
     data,
