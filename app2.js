@@ -10,6 +10,7 @@ const AppError = require('./Utils/AppError');
 const globalErrorHandler = require('./Controllers/AppErrorController');
 
 console.clear();
+// process.env.NODE_ENV == 'production';
 console.log(process.env.NODE_ENV);
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
