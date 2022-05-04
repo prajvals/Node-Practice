@@ -63,7 +63,31 @@ exports.getParticularTour = async (req, res) => {
   // }
 };
 
-exports.createNewTour = async (req, res) => {
+const catchAsync = (fn) => {
+  return (req, res, next) => {
+    fn(req, res, next).catch(next);
+  };
+  // fn(req, res, next).catch((err) => console.log('error occured'));
+};
+/*
+okay this needs a lil bit of more attention 
+1. see when we are creating a global exception handler, we want to pass all the exceptions to it only right 
+2. when we use async await, the exception handling is done using the try catch block
+3. which leads to repeated code everytime and violates the principle of handling errors in one central place alright yeah 
+4. now important thing here is when we use catch async, we are passing a function to it
+5. this is the original function we want to execute alright 
+6. but executing the function will return us the object/promise
+7. while the router expects this routeHandler to actually have a function assigned to it which it can run to return a response
+8. when we wrap the function inside the catchAsync and actually return the function
+9. then its returning an object/promise alright yeah
+10. so instead of calling the main function inside the catchAsync we return one function from it 
+11. and its this function which is run by the express, and hence it gets the req,res,next objects which we pass to our main function
+12. our main function being a async function returns a promise which we can use to catch errors
+13.now the catch having the next is basically because the catch passes the error object into its function right, this function is usually the one we create alright yeah
+14. so here if we are passing next, then this function is getting the next object into it already
+*/
+
+exports.createNewTour = catchAsync(async (req, res, next) => {
   const contents = req.body;
   const data = await tourModel.create(contents);
 
@@ -102,7 +126,7 @@ exports.createNewTour = async (req, res) => {
 
   //see what it returns in async await is what it passes as the response data in
   //.then() alright
-};
+});
 
 exports.updateTour = async (req, res) => {
   const data = await tourModel.findByIdAndUpdate(req.params.id, req.body, {
