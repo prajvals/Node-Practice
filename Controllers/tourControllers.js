@@ -9,7 +9,7 @@ exports.Aliasing = (req, res, next) => {
 };
 
 //ROUTE HANDLERS
-exports.getAllTours = catchAsync(async (req, res) => {
+exports.getAllTours = catchAsync(async (req, res, next) => {
   const featureObject = new ApiFeatures(tourModel.find(), req.query)
     .filter()
     .paginate()
@@ -27,7 +27,7 @@ exports.getAllTours = catchAsync(async (req, res) => {
   });
 });
 
-exports.getParticularTour = catchAsync(async (req, res) => {
+exports.getParticularTour = catchAsync(async (req, res, next) => {
   const data = await tourModel.findById(req.params.id);
 
   res.status((data) => {
@@ -123,7 +123,7 @@ exports.createNewTour = catchAsync(async (req, res, next) => {
   //.then() alright
 });
 
-exports.updateTour = catchAsync (async (req, res) => {
+exports.updateTour = catchAsync(async (req, res, next) => {
   const data = await tourModel.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
@@ -146,7 +146,7 @@ exports.updateTour = catchAsync (async (req, res) => {
   // });
 });
 
-exports.deleteTour = catchAsync (async (req, res) => {
+exports.deleteTour = catchAsync(async (req, res, next) => {
   const data = await tourModel.findByIdAndDelete(req.params.id);
 
   res.status(200).json({
@@ -165,82 +165,81 @@ exports.deleteTour = catchAsync (async (req, res) => {
   // });
 });
 
-exports.tourStats = catchAsync(async (req, res) => {
+exports.tourStats = catchAsync(async (req, res, next) => {
+  const stats = await tourModel.aggregate([
+    {
+      $match: { ratingsAverage: { $gte: 4.5 } },
+    },
+    {
+      $group: {
+        _id: '$difficulty',
+        numRatings: { $sum: '$ratingsQuantity' },
+        numTours: { $sum: 1 },
+        avgRating: { $avg: '$ratingsAverage' },
+        avgPrice: { $avg: '$price' },
+        minPrice: { $min: '$price' },
+        maxPrice: { $max: '$price' },
+      },
+    },
+    {
+      $sort: { avgPrice: 1 },
+    },
+    {
+      $match: { _id: { $ne: 'easy' } },
+    },
+  ]);
 
-    const stats = await tourModel.aggregate([
-      {
-        $match: { ratingsAverage: { $gte: 4.5 } },
-      },
-      {
-        $group: {
-          _id: '$difficulty',
-          numRatings: { $sum: '$ratingsQuantity' },
-          numTours: { $sum: 1 },
-          avgRating: { $avg: '$ratingsAverage' },
-          avgPrice: { $avg: '$price' },
-          minPrice: { $min: '$price' },
-          maxPrice: { $max: '$price' },
-        },
-      },
-      {
-        $sort: { avgPrice: 1 },
-      },
-      {
-        $match: { _id: { $ne: 'easy' } },
-      },
-    ]);
-
-    res.status(200).json({
-      data: stats,
-    });
+  res.status(200).json({
+    data: stats,
+  });
 });
 
-exports.getBusiestMonth = catchAsync(async (req, res) => {
+exports.getBusiestMonth = catchAsync(async (req, res, next) => {
   const year = req.params.year;
   console.log(year);
-    //see unwind is used to create documents out of the elements in the array alright yeah
-    //and then we have the match to get what all to show
-    //group id is used to make collections
-    //$month is an aggregation operator used to get the month
-    //in the same group, we count the number of tours
-    //and add the names in the array using push operator alright yeah
-    const busiestMonth = await tourModel.aggregate([
-      {
-        $unwind: '$startDates',
-      },
-      {
-        $match: {
-          startDates: {
-            $gte: new Date(`${year}-01-01`),
-            $lte: new Date(`${year}-12-31`),
-          },
+  //see unwind is used to create documents out of the elements in the array alright yeah
+  //and then we have the match to get what all to show
+  //group id is used to make collections
+  //$month is an aggregation operator used to get the month
+  //in the same group, we count the number of tours
+  //and add the names in the array using push operator alright yeah
+  const busiestMonth = await tourModel.aggregate([
+    {
+      $unwind: '$startDates',
+    },
+    {
+      $match: {
+        startDates: {
+          $gte: new Date(`${year}-01-01`),
+          $lte: new Date(`${year}-12-31`),
         },
       },
-      {
-        $group: {
-          _id: { $month: '$startDates' },
-          numberOfTours: { $sum: 1 },
-          nameOfTours: { $push: '$name' },
-        },
+    },
+    {
+      $group: {
+        _id: { $month: '$startDates' },
+        numberOfTours: { $sum: 1 },
+        nameOfTours: { $push: '$name' },
       },
-      {
-        $sort: {
-          _id: 1,
-        },
+    },
+    {
+      $sort: {
+        _id: 1,
       },
-      {
-        $addFields: {
-          month: '$_id',
-        },
+    },
+    {
+      $addFields: {
+        month: '$_id',
       },
-      {
-        $project: {
-          _id: 0,
-        },
+    },
+    {
+      $project: {
+        _id: 0,
       },
-    ]);
-    res.status(200).json({
-      status: 'Success',
-      data: busiestMonth,
-    });
+    },
+  ]);
+  res.status(200).json({
+    status: 'Success',
+    data: busiestMonth,
+  });
 });
