@@ -6,7 +6,7 @@ const morgan = require('morgan');
 const app = express();
 const tourRouter = require('./Routes/TourRouter');
 const userRouter = require('./Routes/UserRouter');
-const AppError = require('./Utils/AppError');
+const globalErrorObject = require('./Utils/AppError');
 const globalErrorHandler = require('./Controllers/AppErrorController');
 
 console.clear();
@@ -34,7 +34,7 @@ app.all('*', (req, res, next) => {
   // const err = new Error(`cant find a particular route`);
   // err.status = 'fail';
   // err.statusCode = 404;
-  next(new AppError("Can't find this particular route", 404));
+  next(new globalErrorObject("Can't find this particular route", 404));
 });
 
 app.use(globalErrorHandler);
