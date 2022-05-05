@@ -4,9 +4,10 @@ const bcrypt = require('bcrypt');
 //name,email,photo,password,passwordConfirm
 const userSchema = new mongoose.Schema({
   name: {
+    //when we use the same name its giving some error we need to check it
     type: String,
     required: [true, 'Please Enter your Name'],
-    unique: true,
+    // unique: true,
   },
   email: {
     type: String,
