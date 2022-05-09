@@ -50,7 +50,11 @@ router.route('/busy-Month/:year').get(tourController.getBusiestMonth);
 router
   .route('/:id')
   .patch(tourController.updateTour)
-  .delete(tourController.deleteTour)
+  .delete(
+    authController.protectRoute,
+    authController.restrictTo('admin', 'lead-guide'),
+    tourController.deleteTour
+  )
   .get(tourController.getParticularTour);
 
 module.exports = router;

@@ -18,6 +18,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     photo: req.body.photo,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
+    role: req.body.role,
   });
 
   const token = signToken(newUser._id);
@@ -90,12 +91,30 @@ exports.protectRoute = catchAsync(async (req, res, next) => {
   }
 
   if (freshUser.changedPasswordAfter(decoded.iat)) {
-    return next(globalErrorObject('User recently changed password, please login again'));
+    return next(
+      globalErrorObject('User recently changed password, please login again')
+    );
   }
 
   req.user = freshUser;
   next();
 });
+
+//we could have worked without the use of returning of the main function too, but we needed it for the req, res and the next function alright yeah
+exports.restrictTo = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new globalErrorObject(
+          'You do not have permission to perform this action',
+          403
+        )
+      );
+    }
+    next();
+  };
+};
+
 /*
 see the global error handler is the function we have created in the error Controller
 its responsible for sending the error responses
