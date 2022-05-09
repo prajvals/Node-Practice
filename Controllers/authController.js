@@ -115,6 +115,21 @@ exports.restrictTo = (...roles) => {
   };
 };
 
+
+/*
+see forgot password is basically like, we get the userEmail as the input, we find which user is requesting it, and then we create a randomString, and we provide for how many characters that should be and how it should be like, we make it a string of hex so that its a bit difficult to understand
+we have to store in the db too,but directly storing it would be letting a security vulnerability inside it alright yeah
+so instead of that, we encrypt it and then save while we send back the token
+*/
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return next(new globalErrorObject('No accounts with this id found', 404));
+  }
+  const resetToken = user.createPasswordResetToken();
+  await user.save({ validateBeforeSave: false });
+  
+});
 /*
 see the global error handler is the function we have created in the error Controller
 its responsible for sending the error responses

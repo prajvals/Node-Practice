@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
@@ -43,6 +44,8 @@ const userSchema = new mongoose.Schema({
     },
   },
   passwordChangedAt: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date,
 });
 
 userSchema.pre('save', async function (next) {
@@ -67,6 +70,21 @@ userSchema.methods.changedPasswordAfter = function (JWTTimeStamp) {
     return JWTTimeStamp < changedTimeStamp; //this feature isnt tested for now,will test when we will develop changing password feature
   }
   return false;
+};
+
+userSchema.methods.createPasswordResetToken = function () {
+  //this is to generate the random bytes which we can send alright
+  const resetToken = crypto.randomBytes(32).toString('hex');
+
+  //this is to create the crypto and then we encrypt using sha256
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+  return resetToken;
 };
 const User = mongoose.model('User', userSchema);
 

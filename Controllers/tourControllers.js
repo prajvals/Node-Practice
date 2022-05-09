@@ -137,7 +137,7 @@ exports.updateTour = catchAsync(async (req, res, next) => {
     runValidators: true,
   });
 
-  if (!data) {  
+  if (!data) {
     return next(AppError('No tour found with this record'));
   }
 
@@ -164,9 +164,9 @@ exports.deleteTour = catchAsync(async (req, res, next) => {
   if (!data) {
     return next(AppError('No tour found with this record'));
   }
-  res.status(200).json({
+  res.status(204).json({
     status: 'Success',
-    data,
+    // data,
   });
   // .then((data) => {
   //   res.status(204).json({
