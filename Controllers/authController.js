@@ -1,3 +1,4 @@
+const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const User = require('./../Models/userModel');
 const catchAsync = require('./../Utils/catchAsync');
@@ -48,7 +49,7 @@ exports.login = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ email }).select('+password');
   console.log(user);
   if (!user || !(await user.checkPassword(password, user.password))) {
-    return next(new globalErrorObject('Incorrect Password/Username', 400));
+    return next(new globalErrorObject('Incorrect Password/Username', 401));
   }
 
   const token = signToken(user._id);
@@ -58,6 +59,43 @@ exports.login = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.protectRoute = catchAsync(async (req, res, next) => {
+  console.log(req.headers);
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+  if (!token) {
+    return next(
+      new globalErrorObject('You are not authorized to access this', 401)
+    );
+  }
+
+  //see not all callbacks are promises alright yeah
+  //the only callbacks which are promises are those in which we are returning a promise and calling resolve inside it refer your async js notes for more on it
+  //the decoded object is basically the payload inside the json web token
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+  console.log('element');
+  console.log(decoded);
+
+  // check if the user still exists
+  const freshUser = await User.findById(decoded.id);
+  if (!freshUser) {
+    return next(
+      new globalErrorObject('The User for which this token exsists has expired')
+    );
+  }
+
+  if (freshUser.changedPasswordAfter(decoded.iat)) {
+    return next(globalErrorObject('User recently changed password, please login again'));
+  }
+
+  req.user = freshUser;
+  next();
+});
 /*
 see the global error handler is the function we have created in the error Controller
 its responsible for sending the error responses

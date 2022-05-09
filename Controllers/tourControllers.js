@@ -137,7 +137,7 @@ exports.updateTour = catchAsync(async (req, res, next) => {
     runValidators: true,
   });
 
-  if (!data) {
+  if (!data) {  
     return next(AppError('No tour found with this record'));
   }
 

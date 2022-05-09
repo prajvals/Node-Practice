@@ -9,6 +9,8 @@ const sendDevError = (err, res) => {
   });
 };
 
+const handleTokenError = (err) =>
+  new AppError('Invalid token, please enter right token', 401);
 const handleCastError = (error) => {
   const message = `Invalid ${error.path}:${error.value}`;
   return new AppError(message, 400);
@@ -21,9 +23,13 @@ const handleDuplicateIdError = (err) => {
 };
 
 const ValidationError = (err) => {
-  const arrayOfErrors = Object.values (err.errors).map((el) => el.message);
+  const arrayOfErrors = Object.values(err.errors).map((el) => el.message);
   const message = arrayOfErrors.join('. ');
   return new AppError(message, 400);
+};
+
+const handleJWTExpiredError = (err) => {
+  return new AppError('Your token has expired, Please Login again', 401);
 };
 
 const sendProdError = (err, res) => {
@@ -63,6 +69,12 @@ const errorHandler = (err, req, res, next) => {
     }
     if (err.name === 'ValidationError') {
       error = ValidationError(err);
+    }
+    if (err.name === 'JsonWebTokenError') {
+      error = handleTokenError(err);
+    }
+    if (err.name === 'TokenExpiredError') {
+      error = handleJWTExpiredError(err);
     }
     sendProdError(error, res);
   }

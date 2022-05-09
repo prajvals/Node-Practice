@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const tourController = require('./../Controllers/tourControllers');
+const authController = require('./../Controllers/authController');
 
 // router.param('id', tourController.checkId);
 
-router.use((req, res, next) => {
-  console.log('Yes');
-  next();
-});
+// router.use((req, res, next) => {
+//   console.log('Yes');
+//   next();
+// });
 
 router.use('/v1', (req, res, next) => {
   console.log('Just to check ');
@@ -40,7 +41,7 @@ router
 router
   .route('/')
   .post(tourController.createNewTour)
-  .get(tourController.getAllTours);
+  .get(authController.protectRoute, tourController.getAllTours);
 
 router.route('/stats').get(tourController.tourStats);
 
