@@ -7,6 +7,7 @@ userRouter.post('/login', authController.login);
 userRouter.post('/signup', authController.signup);
 
 userRouter.post('/forgotPassword', authController.forgotPassword);
+// userRouter.patch('/resetPassword',)
 
 userRouter
   .route('/')

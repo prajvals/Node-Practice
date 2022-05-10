@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('./../Models/userModel');
 const catchAsync = require('./../Utils/catchAsync');
 const globalErrorObject = require('./../Utils/AppError');
+const sendEmail = require('./../Utils/error.js');
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -115,7 +116,6 @@ exports.restrictTo = (...roles) => {
   };
 };
 
-
 /*
 see forgot password is basically like, we get the userEmail as the input, we find which user is requesting it, and then we create a randomString, and we provide for how many characters that should be and how it should be like, we make it a string of hex so that its a bit difficult to understand
 we have to store in the db too,but directly storing it would be letting a security vulnerability inside it alright yeah
@@ -128,7 +128,36 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   }
   const resetToken = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
-  
+
+  const resetURL = `${req.protocol}://${req.get(
+    'host'
+  )}/api/v1/users/resetPassword/${resetToken}`;
+
+  const message = `Forgot your password ? Submit a PATCH request with your new password and passwordConfirm to ${resetURL}`;
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: 'Your password reset token (valid for 10 mins)',
+      message,
+    });
+    res.status(200).json({
+      status: 'Success',
+      message: 'reset token sent to email',
+    });
+  } catch (err) {
+    console.log(err);
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+    return next(
+      new globalErrorObject(
+        'Some error occured while sending email, please try again',
+        500
+      )
+    );
+  }
+  return next();
 });
 /*
 see the global error handler is the function we have created in the error Controller
