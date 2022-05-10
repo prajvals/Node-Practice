@@ -1,13 +1,40 @@
 const { promisify } = require('util');
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const User = require('./../Models/userModel');
 const catchAsync = require('./../Utils/catchAsync');
 const globalErrorObject = require('./../Utils/AppError');
-const sendEmail = require('./../Utils/error.js');
+const sendEmail = require('../Utils/email.js');
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
+  });
+};
+
+exports.updatePassword = catchAsync(async (req, res, next) => {
+  console.log(req);
+  const user = await User.findById(req.user.id).select('+password');
+  if (!user) {
+    return next(new globalErrorObject('This user does not exist', 404));
+  }
+  if (!(await user.checkPassword(req.body.password, user.password))) {
+    return next(
+      new globalErrorObject('Password entered is wrong, please try again', 404)
+    );
+  }
+  user.password = req.body.newPassword;
+  user.passwordConfirm = req.body.passwordConfirm;
+  await user.save();
+  sendToken(user, 200, res);
+  next();
+});
+
+const sendToken = (user, statusCode, res) => {
+  const token = signToken(user._id);
+  res.status(statusCode).json({
+    status: 'success',
+    token,
   });
 };
 
@@ -22,15 +49,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     role: req.body.role,
   });
 
-  const token = signToken(newUser._id);
-
-  res.status(201).json({
-    result: 'Success',
-    token,
-    data: {
-      user: newUser,
-    },
-  });
+  sendToken(newUser, 201, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -53,12 +72,7 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!user || !(await user.checkPassword(password, user.password))) {
     return next(new globalErrorObject('Incorrect Password/Username', 401));
   }
-
-  const token = signToken(user._id);
-  res.status(200).json({
-    result: 'Success',
-    token,
-  });
+  sendToken(user, 200, res);
 });
 
 exports.protectRoute = catchAsync(async (req, res, next) => {
@@ -93,7 +107,9 @@ exports.protectRoute = catchAsync(async (req, res, next) => {
 
   if (freshUser.changedPasswordAfter(decoded.iat)) {
     return next(
-      globalErrorObject('User recently changed password, please login again')
+      new globalErrorObject(
+        'User recently changed password, please login again'
+      )
     );
   }
 
@@ -141,7 +157,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
       subject: 'Your password reset token (valid for 10 mins)',
       message,
     });
-    res.status(200).json({
+    return res.status(200).json({
       status: 'Success',
       message: 'reset token sent to email',
     });
@@ -158,6 +174,30 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     );
   }
   return next();
+});
+
+exports.resetPassword = catchAsync(async (req, res, next) => {
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gt: Date.now() },
+  });
+  if (!user) {
+    return next(new globalErrorObject('Token is invalid or expired', 500));
+  }
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+
+  await user.save();
+
+  sendToken(user, 200, res);
+
+  next();
 });
 /*
 see the global error handler is the function we have created in the error Controller

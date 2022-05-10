@@ -55,6 +55,12 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
+userSchema.pre('save', function (next) {
+  if (!this.isModified('password') || this.isNew) return next();
+
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
 //this is an instance method alright
 //and instance method on a collection are available in all documents of the collection
 userSchema.methods.checkPassword = async (candidatePassword, userPassword) => {
