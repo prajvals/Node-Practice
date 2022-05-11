@@ -21,6 +21,8 @@ userRouter.post(
   userController.updatePresentUser
 );
 
+userRouter.delete('/deletePresentUser', authController.protectRoute, userController.deletePresentUser)
+
 userRouter
   .route('/')
   .get(userController.getAllUsers)

@@ -8,7 +8,7 @@ const filterObj = (obj, ...allowedFields) => {
   });
   return newObj;
 };
-exports.updatePresentUser = async (req, res, next) => {
+exports.updatePresentUser = catchAsync(async (req, res, next) => {
   if (req.body.password || req.body.passwordConfirm) {
     return next(
       new globalErrorObject(
@@ -17,7 +17,6 @@ exports.updatePresentUser = async (req, res, next) => {
       )
     );
   }
-
   const user = await User.findById(req.user.id);
   if (!user) {
     return next(new globalErrorObject('User does not exist', 400));
@@ -33,6 +32,17 @@ exports.updatePresentUser = async (req, res, next) => {
     updatedUser,
   });
   // next();
+});
+
+exports.deletePresentUser = async (req, res, next) => {
+  // const user = await User.findById(req.user.id);
+  // user.active = false;
+  // user.save();
+  const user = await User.findByIdAndUpdate(req.user.id, { active: false });
+  res.status(204).json({
+    status: 'success',
+    data: user,
+  });
 };
 
 exports.getAllUsers = (req, res) => {
