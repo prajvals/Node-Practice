@@ -1,26 +1,63 @@
+const User = require('./../Models/userModel');
+const globalErrorObject = require('./../Utils/AppError');
+
+const filterObj = (obj, ...allowedFields) => {
+  const newObj = {};
+  Object.keys(obj).forEach((el) => {
+    if (allowedFields.includes(el)) newObj[el] = obj[el];
+  });
+  return newObj;
+};
+exports.updatePresentUser = async (req, res, next) => {
+  if (req.body.password || req.body.passwordConfirm) {
+    return next(
+      new globalErrorObject(
+        'Password cannot be changed, use /updatePassword',
+        401
+      )
+    );
+  }
+
+  const user = await User.findById(req.user.id);
+  if (!user) {
+    return next(new globalErrorObject('User does not exist', 400));
+  }
+
+  const filteredBody = filterObj(req.body, 'name', 'email');
+  const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
+    new: true,
+    runValidator: true,
+  });
+  return res.status(201).json({
+    status: 'Success',
+    updatedUser,
+  });
+  // next();
+};
+
 exports.getAllUsers = (req, res) => {
   res.status(500).json({
     status: 'failure',
-    message: 'this route is not yet implemented',
+    message: 'getAllUsers',
   });
 };
 
 exports.createNewUser = (req, res) => {
   res.status(500).json({
     status: 'failure',
-    message: 'this route is not yet implemented',
+    message: 'createNew user',
   });
 };
 
 exports.deleteUser = (req, res) => {
   res.status(500).json({
     status: 'failure',
-    message: 'this route is not yet implemented',
+    message: 'delete user',
   });
 };
 exports.updateUser = (req, res) => {
   res.status(500).json({
     status: 'failure',
-    message: 'this route is not yet implemented',
+    message: 'update user',
   });
 };
