@@ -1,4 +1,5 @@
 const xss = require('xss-clean');
+const hpp = require('hpp');
 const mongoSanitise = require('express-mongo-sanitize');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
@@ -40,6 +41,20 @@ app.use(mongoSanitise());
 //to prevent cross site scripting attacks
 app.use(xss());
 
+//to prevent parameter pollution
+app.use(
+  hpp({
+    whitelist: [
+      'duration',
+      'ratingsQuantity',
+      'ratingsAverage',
+      'maxGroupSize',
+      'difficulty',
+      'price',
+    ],
+  })
+);
+
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 
@@ -73,5 +88,8 @@ also setting the limit in json parser is where we can specify till what size are
 noSql query injection run by providing a query instead of a value and then even with only a password or only a particular value they are able to gain access to the system, this is prevented by removing all the $ and mongo operators so as to control the flow of the application alright yeah
 xss() is used to remove any html code, becaus with html code they can embed some javascript code and that will be run on our servers and give them access, this is called as the cross site scripting attack
 this is prevented by changing the html into some symbols so that the html along with their embeded javascript code could not be executed alright 
-
+parameter pollution is that we have the code at multiple places written to handle only one parameter alright
+but the user can send multiple parameters in which case our code throws an error 
+so using this hpp() we select only the latest one as the parameter and present result according to it 
+but besides this too we can specify extra parameters and this we can do by using whitelisting the parameters we need to have duplicates with alright yeah
 */
