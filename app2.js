@@ -1,3 +1,5 @@
+const xss = require('xss-clean');
+const mongoSanitise = require('express-mongo-sanitize');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const express = require('express');
@@ -29,7 +31,14 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
+//body parser
 app.use(express.json({ limit: '10kb' }));
+
+//to prevent NoSQL query injections
+app.use(mongoSanitise());
+
+//to prevent cross site scripting attacks
+app.use(xss());
 
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
@@ -56,11 +65,13 @@ app.use(globalErrorHandler);
 
 module.exports = app;
 
-
 /*
 see helmet is for setting security headers which browsers understand and will incorporate on it alright yeah 
 ratelimiting is to limit the number of requests that a particular ip address can make in a particular time span
 ratelimiting is applied on a particular route and it keeps tracks of all the requests coming to that route
 also setting the limit in json parser is where we can specify till what size are body allowed in here
+noSql query injection run by providing a query instead of a value and then even with only a password or only a particular value they are able to gain access to the system, this is prevented by removing all the $ and mongo operators so as to control the flow of the application alright yeah
+xss() is used to remove any html code, becaus with html code they can embed some javascript code and that will be run on our servers and give them access, this is called as the cross site scripting attack
+this is prevented by changing the html into some symbols so that the html along with their embeded javascript code could not be executed alright 
 
 */
