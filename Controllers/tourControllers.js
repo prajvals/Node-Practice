@@ -93,6 +93,8 @@ okay this needs a lil bit of more attention
 exports.createNewTour = catchAsync(async (req, res, next) => {
   const contents = req.body;
   const data = await tourModel.create(contents);
+  //create is very similar to save, but its like it runs save for a collection of documents and saves them, you can use it with just one doc too
+
 
   res.status(200).json({
     status: 'Success',

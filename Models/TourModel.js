@@ -100,7 +100,12 @@ const tourSchema = new mongoose.Schema(
         day: Number,
       },
     ],
-    guides: Array,
+    guides: [
+      {
+        type: mongoose.schema.ObjectId,
+        ref: 'User ',
+      },
+    ],
   },
   {
     //note we have to enable the virtual in the toJSON, these are the schema options
@@ -120,8 +125,7 @@ tourSchema.virtual('durationInWeeks').get(function () {
 });
 /*
 Mongoose has middlewares, which we can run for specific conditions, like we have middlewares which run for specific paths, there are four types of middlewares in it actually, and what we provide in the functions is the code which is actually run
-
-so these .pre .post with hooks is just similar to paths on which to execute
+so these .pre .post with hooks is run on certain action like save find etc on which to execute
 */
 tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true }); //slug is the last part of the url usually used to identify the resource from it alright yeah
@@ -145,8 +149,16 @@ and even if the return statement has the await of some promise
 the main function in which its defined would always return a promise only 
 okay
 */
- 
-
+tourSchema.pre(/^find/, function (next) {
+  // this.populate('guides')
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt',
+  });
+});
+/*
+see when we select we tell to show it, but when we do - in the value we tell to not show it alright 
+*/
 
 //post is called when the data has been successfully saved in the database
 tourSchema.post('save', function (doc, next) {
@@ -180,4 +192,16 @@ see the startLocation is basically like, its a geoLocation setting up
 in this we have the type as point alright 
 and then in coordinates we have the number alright yeah
 this special type is geoJson alright yeah
+*/
+
+/*
+see when we create a reference, we specify it in the schema itself alright
+but the data doesnt get populated inside it automatically alright yeah
+for populating the data we have to provide it in a populate function 
+and its this populate function which runs and adds the value
+but note this value is not added to the database, its only added to the result of the query to show us
+and we could have implemented it in the response handler itself
+but instead of that we implement it inside the query middleware so that its run everytime we run this query
+and query middlewares are to run a piece of code before the data gets saved 
+and see populate is only to present data in the query its not for presenting data inside the database alright yeah
 */
