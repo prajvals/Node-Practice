@@ -24,9 +24,11 @@ mongoose
   });
 
 //./ represents the place where from the node application has been started alright yeah yup
-//and so if we need the relative path to a particular place we use the __dirname for it alright yeah 
+//and so if we need the relative path to a particular place we use the __dirname for it alright yeah
 
-const dataRead = JSON.parse(fs.readFileSync(`${__dirname}/tours-simple.json`, 'utf-8'));
+const dataRead = JSON.parse(
+  fs.readFileSync(`${__dirname}/tours.json`, 'utf-8')
+);
 
 const deleteDocument = () => {
   console.log(tourModel);

@@ -76,6 +76,29 @@ const tourSchema = new mongoose.Schema(
     secretTour: {
       type: Boolean,
     },
+    startLocation: {
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'],
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+    },
+    locations: [
+      {
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point'],
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number,
+      },
+    ],
   },
   {
     //note we have to enable the virtual in the toJSON, these are the schema options
@@ -129,3 +152,10 @@ tourSchema.pre('aggregate', function (next) {
 });
 const Tour = mongoose.model('Tour', tourSchema);
 module.exports = Tour;
+
+/*
+see the startLocation is basically like, its a geoLocation setting up
+in this we have the type as point alright 
+and then in coordinates we have the number alright yeah
+this special type is geoJson alright yeah
+*/
