@@ -26,7 +26,7 @@ class ApiFeatures {
     });
 
     //apprently we cannot store a promise in a variable
-    let query = tourModel.find(JSON.parse(queryString));
+    this.query.find(JSON.parse(queryString));
     return this;
   }
 

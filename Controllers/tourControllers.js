@@ -11,14 +11,19 @@ exports.Aliasing = (req, res, next) => {
 
 //ROUTE HANDLERS
 exports.getAllTours = catchAsync(async (req, res, next) => {
-  const featureObject = new ApiFeatures(tourModel.find(), req.query)
-    .filter()
-    .paginate()
-    .fieldLimiting()
-    .sort();
+  // const featureObject = new ApiFeatures(tourModel.find(), req.query)
+  // .filter()
+  // .paginate()
+  // .fieldLimiting()
+  // .sort();
 
-  const tourData = await featureObject.query;
+  // console.log(featureObject);
 
+  // console.log(featureObject.query);
+  // const tourData = await featureObject.query;
+
+  const tourData = await tourModel.find();
+  // console.log(tourData);
   res.status(200).json({
     status: 'Success',
     size: tourData.size,
@@ -94,7 +99,6 @@ exports.createNewTour = catchAsync(async (req, res, next) => {
   const contents = req.body;
   const data = await tourModel.create(contents);
   //create is very similar to save, but its like it runs save for a collection of documents and saves them, you can use it with just one doc too
-
 
   res.status(200).json({
     status: 'Success',

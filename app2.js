@@ -11,6 +11,7 @@ const morgan = require('morgan');
 const app = express();
 const tourRouter = require('./Routes/TourRouter');
 const userRouter = require('./Routes/UserRouter');
+const reviewRouter = require('./Routes/ReviewRouter');
 const globalErrorObject = require('./Utils/AppError');
 const globalErrorHandler = require('./Controllers/AppErrorController');
 
@@ -57,6 +58,7 @@ app.use(
 
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/reviews', reviewRouter);
 
 //the difference between app.use and app.all is that
 //app.use is used for middlewares
