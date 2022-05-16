@@ -45,3 +45,19 @@ process.on('unhandledRejection', (err) => {
     process.exit(1);
   });
 });
+
+process.on('SIGTERM', stopHandler);
+process.on('SIGINT', stopHandler);
+process.on('SIGHUP', stopHandler);
+process.on('SIGTSTP', stopHandler);
+function stopHandler() {
+  // console.log('Stopped forcefully');
+  // process.exit(0);
+}
+
+/*
+these are written for freeing the port once the application is closed alright.
+control+c gives sigInt 
+while control+z gives sigtstp signal to the process which is like a sleep signal
+nodemon wasn't releasing the port because a node process was still running 
+*/
