@@ -11,18 +11,18 @@ exports.Aliasing = (req, res, next) => {
 
 //ROUTE HANDLERS
 exports.getAllTours = catchAsync(async (req, res, next) => {
-  // const featureObject = new ApiFeatures(tourModel.find(), req.query)
-  // .filter()
-  // .paginate()
-  // .fieldLimiting()
-  // .sort();
+  const featureObject = new ApiFeatures(tourModel.find(), req.query)
+    .filter()
+    .paginate()
+    .fieldLimiting()
+    .sort();
 
   // console.log(featureObject);
 
   // console.log(featureObject.query);
-  // const tourData = await featureObject.query;
+  const tourData = await featureObject.query;
 
-  const tourData = await tourModel.find();
+  // const tourData = await tourModel.find();
   // console.log(tourData);
   res.status(200).json({
     status: 'Success',
@@ -43,11 +43,15 @@ exports.getParticularTour = catchAsync(async (req, res, next) => {
   if (!data) {
     return next(AppError('No tour found with this record'));
   }
-  res.status((data) => {
-    res.status(200).json({
-      data,
-    });
+  console.log(data);
+  res.status(200).json({
+    data,
   });
+  // res.status((data) => {
+  //   res.status(200).json({
+  //     data,
+  //   });
+  // });
 
   // .then((data) => {
   //   res.status(200).json({

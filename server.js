@@ -51,8 +51,8 @@ process.on('SIGINT', stopHandler);
 process.on('SIGHUP', stopHandler);
 process.on('SIGTSTP', stopHandler);
 function stopHandler() {
-  // console.log('Stopped forcefully');
-  // process.exit(0);
+  console.log('Stopped forcefully');
+  process.exit(0);
 }
 
 /*

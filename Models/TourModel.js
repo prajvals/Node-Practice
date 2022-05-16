@@ -115,6 +115,7 @@ const tourSchema = new mongoose.Schema(
     toObject: {
       virtuals: true,
     },
+    bufferCommands: true,
   }
 );
 /*virtual properties are those which are derieved from some other property already stored in the database, and hence we dont save it, rather calculate it this way
@@ -150,11 +151,11 @@ the main function in which its defined would always return a promise only
 okay
 */
 tourSchema.pre(/^find/, function (next) {
-  // this.populate('guides')
+  // this.populate('guides');
   this.populate({
     path: 'guides',
-    select: '-__v -passwordChangedAt',
   });
+  next();
 });
 /*
 see when we select we tell to show it, but when we do - in the value we tell to not show it alright 
@@ -171,11 +172,14 @@ tourSchema.post('save', function (doc, next) {
 
 //QUERY MIDDLEWARES
 tourSchema.pre('/^find/', function (next) {
-  this.find({ secretTour: true }); //basically this here means query and we are chaining this find on it
+  this.find({ secretTour: true });
+  next();
+  //basically this here means query and we are chaining this find on it
 });
 
 tourSchema.post('/^find/', function (docs, next) {
   console.log(docs);
+  next();
 });
 
 //AGGREGATOR MIDDLEWARE
@@ -184,8 +188,8 @@ tourSchema.pre('aggregate', function (next) {
   console.log(this.pipeline());
   next();
 });
-const Tour = mongoose.model('Tour', tourSchema);
-module.exports = Tour;
+const tours = mongoose.model('tours', tourSchema, 'tours');
+module.exports = tours;
 
 /*
 see the startLocation is basically like, its a geoLocation setting up
