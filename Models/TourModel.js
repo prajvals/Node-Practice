@@ -100,13 +100,13 @@ const tourSchema = new mongoose.Schema(
         day: Number,
       },
     ],
-    guides: Array,
-    // guides: [
-    //   {
-    //     type: mongoose.Schema.ObjectId,
-    //     ref: 'User ',
-    //   },
-    // ],
+    // guides: Array,
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User ',
+      },
+    ],
   },
   {
     //note we have to enable the virtual in the toJSON, these are the schema options
@@ -135,15 +135,15 @@ tourSchema.pre('save', function (next) {
 });
 
 //this is for the embedding the user inside the tour model
-tourSchema.pre('save', async function (next) {
-  const guidesPromises = this.guides.map(async (id) => {
-    const user = await User.findById(id);
-    return user;
-  });
-  this.guides = await Promise.all(guidesPromises);
-  console.log(this.guides);
-  next();
-});
+// tourSchema.pre('save', async function (next) {
+//   const guidesPromises = this.guides.map(async (id) => {
+//     const user = await User.findById(id);
+//     return user;
+//   });
+//   this.guides = await Promise.all(guidesPromises);
+//   console.log(this.guides);
+//   next();
+// });
 //very important note here
 /*
 see when we use async await, we are actually awaiting the response alright
