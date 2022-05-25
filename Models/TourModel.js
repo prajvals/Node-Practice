@@ -154,6 +154,9 @@ and even if the return statement has the await of some promise
 the main function in which its defined would always return a promise only 
 okay
 see returning await was giving issues, hence we needed to use the return user and that is working properly, will investigate
+see when we embed something those values are also stored in the db
+but if consider that we are to reference them, then they are not stored in the db, they are just retrived when we query them alright yeah 
+we wont embed the data in the final implementation because if the user is changed, then in the tours table we will again have to implement them alright yeah 
 */
 tourSchema.pre(/^find/, function (next) {
   // this.populate('guides');
