@@ -34,14 +34,14 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 });
 
 exports.getParticularTour = catchAsync(async (req, res, next) => {
-  const data = await tourModel.findById(req.params.id);
+  const data = await tourModel.findById(req.params.id).populate('reviews');
 
   //note: this is for handling the error that we were returning null
   //but if there is really a validation error or similar to this
   //there would be a mongo db error that would be caught by the global error handling
   //functions alright yeah
   if (!data) {
-    return next(AppError('No tour found with this record'));
+    return next(new AppError('No tour found with this record'));
   }
   console.log(data);
   res.status(200).json({
@@ -137,7 +137,6 @@ exports.deleteTour = catchAsync(async (req, res, next) => {
   res.status(204).json({
     status: 'Success',
   });
- 
 });
 
 exports.tourStats = catchAsync(async (req, res, next) => {

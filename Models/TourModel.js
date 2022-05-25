@@ -125,6 +125,23 @@ it needs that we allow the schema properties to show virtuals in it alright yeah
 tourSchema.virtual('durationInWeeks').get(function () {
   return this.duration / 7;
 });
+//this is virtual populating
+tourSchema.virtual('reviews', {
+  ref: 'Reviews',
+  foreignField: 'tour',
+  localField: '_id',
+});
+/*
+we need virtual populating because we need access to the reviews in tour too
+we dont know how big the reviews array can be, hence embedding them or even child referencing them will be a wrong decision
+hence we have done parent referencing in the reviews model
+but we still need it here
+the two approaches can be that we make another call to the reviews and fetch the docs/reviews of our particular tour
+or we maintain the child referencing, child referencing is not an option because of the memory issue discussed above
+hence we make another call, but instead of making it manually we use the virtual populate to get the items alright yeah 
+*/
+
+
 /*
 Mongoose has middlewares, which we can run for specific conditions, like we have middlewares which run for specific paths, there are four types of middlewares in it actually, and what we provide in the functions is the code which is actually run
 so these .pre .post with hooks is run on certain action like save find etc on which to execute
