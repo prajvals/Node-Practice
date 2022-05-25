@@ -1,5 +1,6 @@
 const User = require('./../Models/userModel');
 const globalErrorObject = require('./../Utils/AppError');
+const catchAsync = require('./../Utils/catchAsync');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -45,7 +46,7 @@ exports.deletePresentUser = async (req, res, next) => {
   });
 };
 
-exports.getAllUsers = async (req, res, next) => {
+exports.getAllUsers = catchAsync(async (req, res, next) => {
   const data = await User.find();
   if (data == null) {
     next(new globalErrorObject('No records Found', 404));
@@ -54,14 +55,23 @@ exports.getAllUsers = async (req, res, next) => {
     status: 'success',
     message: data,
   });
-};
+});
 
-exports.createNewUser = (req, res) => {
-  res.status(500).json({
-    status: 'failure',
-    message: 'createNew user',
+//this is just for testing, the right method is to use signup router
+exports.createNewUser = catchAsync(async (req, res, next) => {
+  const data = req.body;
+  const newUser = await User.create(data);
+
+  if (!newUser) {
+    next(new globalErrorObject());
+  }
+  res.status(201).json({
+    status: 'success',
+    data: {
+      newUser,
+    },
   });
-};
+});
 
 exports.deleteUser = (req, res) => {
   res.status(500).json({
