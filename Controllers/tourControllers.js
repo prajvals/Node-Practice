@@ -108,34 +108,6 @@ exports.createNewTour = catchAsync(async (req, res, next) => {
     status: 'Success',
     data,
   });
-  // .then((data) => {
-  //   res.status(200).json({
-  //     status: 'Success',
-  //     data: {
-  //       data,
-  //     },
-  //   });
-  // })
-  // .catch((err) => {
-  //   res.status(200).json({
-  //     status: 'fail',
-  //     message: 'Something went wrong',
-  //   });
-  // });
-  // try {
-  //   const newTour = await tourModel.create(contents);
-  //   res.status(200).json({
-  //     status: 'Success',
-  //     data: {
-  //       newTour,
-  //     },
-  //   });
-  // } catch (err) {
-  //   res.status(400).json({
-  //     status: 'fail',
-  //     message: 'Please Send proper data',
-  //   });
-  // }
 
   //see what it returns in async await is what it passes as the response data in
   //.then() alright
@@ -154,18 +126,6 @@ exports.updateTour = catchAsync(async (req, res, next) => {
   res.status(200).json({
     data,
   });
-  // .then((data) => {
-  //   res.status(200).json({
-  //     data,
-  //   });
-  // })
-  // .catch((err) => {
-  //   console.log('Err occured');
-  //   console.log(err);
-  //   res.status(400).json({
-  //     err,
-  //   });
-  // });
 });
 
 exports.deleteTour = catchAsync(async (req, res, next) => {
@@ -176,18 +136,8 @@ exports.deleteTour = catchAsync(async (req, res, next) => {
   }
   res.status(204).json({
     status: 'Success',
-    // data,
   });
-  // .then((data) => {
-  //   res.status(204).json({
-  //     data: null,
-  //   });
-  // })
-  // .catch((err) => {
-  //   res.status(400).json({
-  //     err,
-  //   });
-  // });
+ 
 });
 
 exports.tourStats = catchAsync(async (req, res, next) => {

@@ -104,7 +104,7 @@ const tourSchema = new mongoose.Schema(
     guides: [
       {
         type: mongoose.Schema.ObjectId,
-        ref: 'User ',
+        ref: 'User',
       },
     ],
   },
@@ -159,9 +159,9 @@ but if consider that we are to reference them, then they are not stored in the d
 we wont embed the data in the final implementation because if the user is changed, then in the tours table we will again have to implement them alright yeah 
 */
 tourSchema.pre(/^find/, function (next) {
-  // this.populate('guides');
   this.populate({
     path: 'guides',
+    // select: '- _v -passwordChangedAt',
   });
   next();
 });
