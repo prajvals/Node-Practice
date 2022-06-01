@@ -25,7 +25,7 @@ app.get('/api/v1/tours', (req, res) => {
 });
 
 app.get('/api/v1/tours/:id', (req, res) => {
-  console.log(req.params);
+  // console.log(req.params);
   req.params.id = req.params.id * 1;
   if (req.params.id > tours.length) {
     return res.status(404).json({
@@ -34,7 +34,7 @@ app.get('/api/v1/tours/:id', (req, res) => {
     });
   }
   const particularTour = tours.find((el) => req.params.id === el.id);
-  console.log(particularTour);
+  // console.log(particularTour);
   res.status(200).json({
     status: 'Success',
     data: {

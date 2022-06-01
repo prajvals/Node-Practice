@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const tourController = require('./../Controllers/tourControllers');
 const authController = require('./../Controllers/authController');
+const reviewController = require('./../Controllers/ReviewController');
 
 // router.param('id', tourController.checkId);
 
@@ -57,4 +58,15 @@ router
   )
   .get(tourController.getParticularTour);
 
+router
+  .route('/:id/reviews')
+  .post(
+    authController.protectRoute,
+    authController.restrictTo('user'),
+    reviewController.createNewReview
+  )
+  .get(reviewController.getAllReviews);
+/*
+  Nested routes are used so that the user doesnt need to provide all data in its body, the data in these is picked up from the user logged in and the tour he is viewing 
+  */
 module.exports = router;

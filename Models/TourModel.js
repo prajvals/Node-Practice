@@ -137,7 +137,7 @@ we dont know how big the reviews array can be, hence embedding them or even chil
 hence we have done parent referencing in the reviews model
 but we still need it here
 the two approaches can be that we make another call to the reviews and fetch the docs/reviews of our particular tour
-or we maintain the child referencing, child referencing is not an option because of the memory issue discussed above
+or we maintain the child referencing, child referencing is not an optio  n because of the memory issue discussed above
 hence we make another call, but instead of making it manually we use the virtual populate to get the items alright yeah 
 */
 

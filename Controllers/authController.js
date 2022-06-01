@@ -13,7 +13,7 @@ const signToken = (id) => {
 };
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
-  console.log(req);
+  // console.log(req);
   const user = await User.findById(req.user.id).select('+password');
   if (!user) {
     return next(new globalErrorObject('This user does not exist', 404));
@@ -47,7 +47,7 @@ const sendToken = (user, statusCode, res) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
-  console.log(req.body);
+  // console.log(req.body);
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
