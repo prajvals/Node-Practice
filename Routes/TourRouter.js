@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const tourController = require('./../Controllers/tourControllers');
 const authController = require('./../Controllers/authController');
-const reviewController = require('./../Controllers/ReviewController');
+// const reviewController = require('./../Controllers/ReviewController');
+const reviewRouter = require('./ReviewRouter');
 
 // router.param('id', tourController.checkId);
 
@@ -10,6 +11,7 @@ const reviewController = require('./../Controllers/ReviewController');
 //   console.log('Yes');
 //   next();
 // });
+router.use('/:id/reviews', reviewRouter); //here we mounted another router on top of this router
 
 router.use('/v1', (req, res, next) => {
   console.log('Just to check ');
@@ -58,14 +60,14 @@ router
   )
   .get(tourController.getParticularTour);
 
-router
-  .route('/:id/reviews')
-  .post(
-    authController.protectRoute,
-    authController.restrictTo('user'),
-    reviewController.createNewReview
-  )
-  .get(reviewController.getAllReviews);
+// router
+//   .route('/:id/reviews')
+//   .post(
+//     authController.protectRoute,
+//     authController.restrictTo('user'),
+//     reviewController.createNewReview
+//   )
+//   .get(reviewController.getAllReviews);
 /*
   Nested routes are used so that the user doesnt need to provide all data in its body, the data in these is picked up from the user logged in and the tour he is viewing 
   */

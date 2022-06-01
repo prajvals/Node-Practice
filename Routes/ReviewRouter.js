@@ -1,6 +1,8 @@
 const express = require('express');
 const reviewController = require('./../Controllers/ReviewController');
-const reviewRouter = express.Router();
+const reviewRouter = express.Router({
+  mergeParams: true,
+}); // this is to get the params from routers
 const authController = require('./../Controllers/authController');
 
 reviewRouter
