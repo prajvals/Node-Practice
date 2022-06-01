@@ -4,7 +4,11 @@ const globalErrorObject = require('./../Utils/AppError');
 const catchAsync = require('./../Utils/catchAsync');
 
 exports.getAllReviews = catchAsync(async (req, res, next) => {
-  const reviews = await Review.find();
+  let filter = {};
+  if (req.params.id) {
+    filter = { tour: req.params.id };
+  }
+  const reviews = await Review.find(filter);
   if (reviews === null) {
     next(new globalErrorObject('No Records Found', 400));
   }
