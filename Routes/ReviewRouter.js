@@ -14,10 +14,9 @@ reviewRouter
     reviewController.createNewReview
   );
 
-reviewRouter.delete(
-  '/:id',
-  authController.protectRoute,
-  reviewController.deleteReview
-);
+reviewRouter
+  .route('/:id')
+  .delete(authController.protectRoute, reviewController.deleteReview)
+  .patch(reviewController.updateReview);
 
 module.exports = reviewRouter;

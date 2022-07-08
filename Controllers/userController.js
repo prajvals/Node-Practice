@@ -75,9 +75,4 @@ exports.createNewUser = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteUser = factory.deleteOne(User, 'User');
-exports.updateUser = (req, res) => {
-  res.status(500).json({
-    status: 'failure',
-    message: 'update user',
-  });
-};
+exports.updateUser = factory.updateOne(User, 'User');

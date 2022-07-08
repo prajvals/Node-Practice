@@ -124,32 +124,8 @@ exports.createNewTour = catchAsync(async (req, res, next) => {
   //.then() alright
 });
 
-exports.updateTour = catchAsync(async (req, res, next) => {
-  const data = await tourModel.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-
-  if (!data) {
-    return next(AppError('No tour found with this record'));
-  }
-
-  res.status(200).json({
-    data,
-  });
-});
-
+exports.updateTour = factory.updateOne(tourModel, 'Tour');
 exports.deleteTour = factory.deleteOne(tourModel, 'Tour');
-// exports.deleteTour = catchAsync(async (req, res, next) => {
-//   const data = await tourModel.findByIdAndDelete(req.params.id);
-
-//   if (!data) {
-//     return next(AppError('No tour found with this record'));
-//   }
-//   res.status(204).json({
-//     status: 'Success',
-//   });
-// });
 
 exports.tourStats = catchAsync(async (req, res, next) => {
   const stats = await tourModel.aggregate([

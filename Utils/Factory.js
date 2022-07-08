@@ -12,3 +12,19 @@ exports.deleteOne = (Model, nameOfModel) =>
       status: 'Success',
     });
   });
+
+
+exports.updateOne = (Model,nameOfModel) => catchAsync(async (req, res, next) => {
+  const data = await Model.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+
+  if (!data) {
+    return next(AppError(`No ${nameOfModel} found with this record`));
+  }
+
+  res.status(200).json({
+    data,
+  });
+});

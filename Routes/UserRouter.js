@@ -40,7 +40,7 @@ userRouter
   .post(userController.createNewUser);
 userRouter
   .route('/:id')
-  .put(userController.updateUser)
+  .patch(userController.updateUser)
   .delete(userController.deleteUser);
 
 module.exports = userRouter;
