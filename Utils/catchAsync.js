@@ -3,3 +3,4 @@ module.exports = catchAsync = (fn) => {
     fn(req, res, next).catch(next);
   };
 };
+
