@@ -21,7 +21,18 @@ userRouter.post(
   userController.updatePresentUser
 );
 
-userRouter.delete('/deletePresentUser', authController.protectRoute, userController.deletePresentUser)
+userRouter.delete(
+  '/deletePresentUser',
+  authController.protectRoute,
+  userController.deletePresentUser
+);
+
+userRouter.delete(
+  '/:id',
+  authController.protectRoute,
+  authController.restrictTo('admin'),
+  userController.deleteUser
+);
 
 userRouter
   .route('/')

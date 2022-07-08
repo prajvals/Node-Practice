@@ -1,6 +1,7 @@
 const User = require('./../Models/userModel');
 const globalErrorObject = require('./../Utils/AppError');
 const catchAsync = require('./../Utils/catchAsync');
+const factory = require('./../Utils/Factory');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -53,7 +54,7 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
   }
   res.status(200).json({
     status: 'success',
-    message: data,
+    data: data,
   });
 });
 
@@ -73,12 +74,7 @@ exports.createNewUser = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteUser = (req, res) => {
-  res.status(500).json({
-    status: 'failure',
-    message: 'delete user',
-  });
-};
+exports.deleteUser = factory.deleteOne(User, 'User');
 exports.updateUser = (req, res) => {
   res.status(500).json({
     status: 'failure',

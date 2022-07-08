@@ -2,6 +2,7 @@ const tourModel = require('./../Models/TourModel');
 const ApiFeatures = require('./../Utils/ApiFeatures');
 const catchAsync = require('./../Utils/catchAsync');
 const AppError = require('./../Utils/AppError');
+const factory = require('./../Utils/Factory');
 
 exports.Aliasing = (req, res, next) => {
   req.query.limit = '5';
@@ -16,17 +17,11 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
     .paginate()
     .fieldLimiting()
     .sort();
-
-  // console.log(featureObject);
-
-  // console.log(featureObject.query);
   const tourData = await featureObject.query;
-
-  // const tourData = await tourModel.find();
-  // console.log(tourData);
+  console.log(tourData.length);
   res.status(200).json({
     status: 'Success',
-    size: tourData.size,
+    resultSize: tourData.length,
     data: {
       tourData,
     },
@@ -128,16 +123,17 @@ exports.updateTour = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteTour = catchAsync(async (req, res, next) => {
-  const data = await tourModel.findByIdAndDelete(req.params.id);
+exports.deleteTour = factory.deleteOne(tourModel, 'Tour');
+// exports.deleteTour = catchAsync(async (req, res, next) => {
+//   const data = await tourModel.findByIdAndDelete(req.params.id);
 
-  if (!data) {
-    return next(AppError('No tour found with this record'));
-  }
-  res.status(204).json({
-    status: 'Success',
-  });
-});
+//   if (!data) {
+//     return next(AppError('No tour found with this record'));
+//   }
+//   res.status(204).json({
+//     status: 'Success',
+//   });
+// });
 
 exports.tourStats = catchAsync(async (req, res, next) => {
   const stats = await tourModel.aggregate([
