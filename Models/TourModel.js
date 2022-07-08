@@ -126,8 +126,8 @@ tourSchema.virtual('durationInWeeks').get(function () {
   return this.duration / 7;
 });
 //this is virtual populating
-tourSchema.virtual('reviews', {
-  ref: 'Reviews',
+tourSchema.virtual('review', {
+  ref: 'Review',
   foreignField: 'tour',
   localField: '_id',
 });
@@ -140,7 +140,6 @@ the two approaches can be that we make another call to the reviews and fetch the
 or we maintain the child referencing, child referencing is not an optio  n because of the memory issue discussed above
 hence we make another call, but instead of making it manually we use the virtual populate to get the items alright yeah 
 */
-
 
 /*
 Mongoose has middlewares, which we can run for specific conditions, like we have middlewares which run for specific paths, there are four types of middlewares in it actually, and what we provide in the functions is the code which is actually run
@@ -227,7 +226,7 @@ this special type is geoJson alright yeah
 see when we create a reference, we specify it in the schema itself alright
 but the data doesnt get populated inside it automatically alright yeah
 for populating the data we have to provide it in a populate function 
-and its this populate function which runs and adds the value
+and its this populate functiovn which runs and adds the value
 but note this value is not added to the database, its only added to the result of the query to show us
 and we could have implemented it in the response handler itself
 but instead of that we implement it inside the query middleware so that its run everytime we run this query

@@ -10,7 +10,8 @@ reviewRouter
   .get(authController.protectRoute, reviewController.getAllReviews)
   .post(
     authController.protectRoute,
-    // authController.restrictTo('admin'),
+    // authController.restrictTo('user'),
+    reviewController.setIds,
     reviewController.createNewReview
   );
 

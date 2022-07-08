@@ -30,10 +30,10 @@ const reviewSchema = new mongoose.Schema(
   {
     //note we have to enable the virtual in the toJSON, these are the schema options
     toJSON: {
-      virtuals: false,
+      virtuals: true,
     },
     toObject: {
-      virtuals: false,
+      virtuals: true,
     },
     bufferCommands: false,
   }

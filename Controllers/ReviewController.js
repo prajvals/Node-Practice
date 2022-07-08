@@ -22,20 +22,13 @@ exports.getAllReviews = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.createNewReview = catchAsync(async (req, res, next) => {
+exports.setIds = (req, res, next) => {
   console.log(req.params);
   if (!req.body.user) req.body.user = req.user.id;
   if (!req.body.tour) req.body.tour = req.params.id; //the name we use as id is the one used in the router too
-  const newReview = req.body;
-  const data = await Review.create(newReview);
+  next();
+};
 
-  res.status(201).json({
-    status: 'success',
-    data: {
-      review: data,
-    },
-  });
-});
-
+exports.createNewReview = factory.createOne(Review, 'Review');
 exports.deleteReview = factory.deleteOne(Review, 'Review');
 exports.updateReview = factory.updateOne(Review, 'Review');

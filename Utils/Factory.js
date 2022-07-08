@@ -12,19 +12,30 @@ exports.deleteOne = (Model, nameOfModel) =>
       status: 'Success',
     });
   });
+exports.updateOne = (Model, nameOfModel) =>
+  catchAsync(async (req, res, next) => {
+    const data = await Model.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
 
+    if (!data) {
+      return next(AppError(`No ${nameOfModel} found with this record`));
+    }
 
-exports.updateOne = (Model,nameOfModel) => catchAsync(async (req, res, next) => {
-  const data = await Model.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
+    res.status(200).json({});
   });
+exports.createOne = (Model, nameOfModel) =>
+  catchAsync(async (req, res, next) => {
+    const contents = req.body;
+    const data = await Model.create(contents);
+    //create is very similar to save, but its like it runs save for a collection of documents and saves them, you can use it with just one doc too
 
-  if (!data) {
-    return next(AppError(`No ${nameOfModel} found with this record`));
-  }
+    res.status(200).json({
+      status: 'Success',
+      data,
+    });
 
-  res.status(200).json({
-    data,
+    //see what it returns in async await is what it passes as the response data in
+    //.then() alright
   });
-});

@@ -76,6 +76,8 @@ exports.getParticularTour = catchAsync(async (req, res, next) => {
   // }
 });
 
+//for some reason the value for the reviews is not coming, will find and fix this bug later
+
 /*
 okay this needs a lil bit of more attention 
 1. see when we are creating a global exception handler, we want to pass all the exceptions to it only right 
@@ -110,20 +112,7 @@ added later
 13. note that now, in routeHandlers, we are actually pointing to the function which is returned by catchAsync, by actually calling catchAsync at the routeHandler place alright yeah
 */
 
-exports.createNewTour = catchAsync(async (req, res, next) => {
-  const contents = req.body;
-  const data = await tourModel.create(contents);
-  //create is very similar to save, but its like it runs save for a collection of documents and saves them, you can use it with just one doc too
-
-  res.status(200).json({
-    status: 'Success',
-    data,
-  });
-
-  //see what it returns in async await is what it passes as the response data in
-  //.then() alright
-});
-
+exports.createNewTour = factory.createOne(tourModel, 'Tour');
 exports.updateTour = factory.updateOne(tourModel, 'Tour');
 exports.deleteTour = factory.deleteOne(tourModel, 'Tour');
 
