@@ -39,3 +39,54 @@ exports.createOne = (Model, nameOfModel) =>
     //see what it returns in async await is what it passes as the response data in
     //.then() alright
   });
+exports.getOne = (Model, nameOfModel, populateOptions) =>
+  catchAsync(async (req, res, next) => {
+    let query = Model.findById(req.params.id);
+    if (populateOptions) {
+      query = query.populate(populateOptions);
+    }
+    const data = await query;
+    //note: this is for handling the error that we were returning null
+    //but if there is really a validation error or similar to this
+    //there would be a mongo db error that would be caught by the global error handling
+    //functions alright yeah
+    if (!data) {
+      return next(new AppError(`No ${nameOfModel} found with this record`));
+    }
+    console.log(data);
+    res.status(200).json({
+      data,
+    });
+    // res.status((data) => {
+    //   res.status(200).json({
+    //     data,
+    //   });
+    // });
+
+    // .then((data) => {
+    //   res.status(200).json({
+    //     data,
+    //   });
+    // })
+
+    // .catch((err) => {
+    //   console.log(err);
+    //   res.status(400).json({
+    //     status: 'fail',
+    //     message: 'Improper request',
+    //   });
+    // });
+
+    // console.log(req.params);
+    // let particularTour;
+    // console.log(tourList);
+    // particularTour = tourList.find((element) => element.id === req.params.id);
+    // // for (const element of tourList) {
+    //   if (element.id === req.params.id) {
+    //     console.log(element.id);
+    //     console.log(element);
+    //     particularTour = element;
+    //     break;
+    //   }
+    // }
+  });

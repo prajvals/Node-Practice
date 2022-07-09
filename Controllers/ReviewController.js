@@ -32,3 +32,4 @@ exports.setIds = (req, res, next) => {
 exports.createNewReview = factory.createOne(Review, 'Review');
 exports.deleteReview = factory.deleteOne(Review, 'Review');
 exports.updateReview = factory.updateOne(Review, 'Review');
+exports.getReview = factory.getOne(Review, 'Review');
