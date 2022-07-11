@@ -5,20 +5,27 @@ const reviewRouter = express.Router({
 }); // this is to get the params from routers
 const authController = require('./../Controllers/authController');
 
+reviewRouter.use(authController.protectRoute);
+
 reviewRouter
   .route('/')
-  .get(authController.protectRoute, reviewController.getAllReviews)
+  .get(reviewController.getAllReviews)
   .post(
-    authController.protectRoute,
-    // authController.restrictTo('user'),
+    authController.restrictTo('user'),
     reviewController.setIds,
     reviewController.createNewReview
   );
 
 reviewRouter
   .route('/:id')
-  .delete(authController.protectRoute, reviewController.deleteReview)
-  .patch(reviewController.updateReview)
+  .delete(
+    authController.restrictTo('user', 'admin'),
+    reviewController.deleteReview
+  )
+  .patch(
+    authController.restrictTo('user', 'admin'),
+    reviewController.updateReview
+  )
   .get(reviewController.getReview);
 
 module.exports = reviewRouter;

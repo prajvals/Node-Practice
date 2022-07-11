@@ -43,16 +43,30 @@ router
 
 router
   .route('/')
-  .post(tourController.createNewTour)
-  .get(authController.protectRoute, tourController.getAllTours);
+  .post(
+    authController.protectRoute,
+    authController.restrictTo('admin', 'lead-guide'),
+    tourController.createNewTour
+  )
+  .get(tourController.getAllTours);
 
 router.route('/stats').get(tourController.tourStats);
 
-router.route('/busy-Month/:year').get(tourController.getBusiestMonth);
+router
+  .route('/busy-Month/:year')
+  .get(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide'),
+    tourController.getBusiestMonth
+  );
 
 router
   .route('/:id')
-  .patch(tourController.updateTour)
+  .patch(
+    authController.protectRoute,
+    authController.restrictTo('admin', 'lead-guide'),
+    tourController.updateTour
+  )
   .delete(
     authController.protectRoute,
     authController.restrictTo('admin', 'lead-guide'),

@@ -9,28 +9,27 @@ userRouter.post('/signup', authController.signup);
 userRouter.post('/forgotPassword', authController.forgotPassword);
 userRouter.patch('/resetPassword/:token', authController.resetPassword);
 
+userRouter.use(authController.protectRoute); //to allow only the logged in users for all the routes that follow ie written below
+
 userRouter.patch(
   '/updatePassword',
-  authController.protectRoute,
   authController.updatePassword
 );
 
 userRouter.post(
   '/updatePresentUser',
-  authController.protectRoute,
   userController.updatePresentUser
 );
 
 userRouter.delete(
   '/deletePresentUser',
-  authController.protectRoute,
   userController.deletePresentUser
 );
 
+userRouter.use(authController.restrictTo('admin')) //to restrict the routes to only the admin for all the routes that go below
+
 userRouter.delete(
   '/:id',
-  authController.protectRoute,
-  authController.restrictTo('admin'),
   userController.deleteUser
 );
 
@@ -41,7 +40,6 @@ userRouter
 
 userRouter.get(
   '/me',
-  authController.protectRoute,
   userController.getMe,
   userController.getUser
 );
