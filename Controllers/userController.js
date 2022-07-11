@@ -36,6 +36,11 @@ exports.updatePresentUser = catchAsync(async (req, res, next) => {
   // next();
 });
 
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
+
 exports.deletePresentUser = async (req, res, next) => {
   // const user = await User.findById(req.user.id);
   // user.active = false;
@@ -48,7 +53,6 @@ exports.deletePresentUser = async (req, res, next) => {
 };
 
 exports.getAllUsers = factory.getAll(User, 'User');
-
 //this is just for testing, the right method is to use signup router
 exports.createNewUser = catchAsync(async (req, res, next) => {
   const data = req.body;
@@ -64,7 +68,6 @@ exports.createNewUser = catchAsync(async (req, res, next) => {
     },
   });
 });
-
 exports.deleteUser = factory.deleteOne(User, 'User');
 exports.updateUser = factory.updateOne(User, 'User');
 exports.getUser = factory.getOne(User, 'User');

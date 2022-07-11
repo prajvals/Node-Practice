@@ -38,6 +38,14 @@ userRouter
   .route('/')
   .get(userController.getAllUsers)
   .post(userController.createNewUser);
+
+userRouter.get(
+  '/me',
+  authController.protectRoute,
+  userController.getMe,
+  userController.getUser
+);
+
 userRouter
   .route('/:id')
   .patch(userController.updateUser)
