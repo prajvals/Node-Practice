@@ -55,7 +55,7 @@ router.route('/stats').get(tourController.tourStats);
 router
   .route('/busy-Month/:year')
   .get(
-    authController.protect,
+    authController.protectRoute,
     authController.restrictTo('admin', 'lead-guide'),
     tourController.getBusiestMonth
   );
