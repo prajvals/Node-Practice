@@ -103,6 +103,7 @@ exports.getAll = (Model, nameOfModel, filterOptions = {}) =>
       .paginate()
       .fieldLimiting()
       .sort();
+    // await featureObject.query.explain(); is used to get execution stats
     const data = await featureObject.query;
     console.log(data.length);
     res.status(200).json({

@@ -2,11 +2,7 @@ const mongoose = require('mongoose');
 const slugify = require('slugify');
 const User = require('./userModel');
 
-//you can send any other data apart from what is defined in the schema
-//but only what is defined in the schema would be the one taken up
-//rest will be discarded
-//also if there are validation errors which come when a required value is missing
-//of the unique property is not satisfied, then we will have errors too
+//1
 const tourSchema = new mongoose.Schema(
   {
     name: {
@@ -119,32 +115,22 @@ const tourSchema = new mongoose.Schema(
     bufferCommands: true,
   }
 );
-/*virtual properties are those which are derieved from some other property already stored in the database, and hence we dont save it, rather calculate it this way
-it needs that we allow the schema properties to show virtuals in it alright yeah
-*/
+
+tourSchema.index({ price: 1, ratingsAverage: -1 });
+tourSchema.index({ slug: 1 });
+
+//2
 tourSchema.virtual('durationInWeeks').get(function () {
   return this.duration / 7;
 });
-//this is virtual populating
+//3 this is virtual populating
 tourSchema.virtual('reviews', {
   ref: 'Reviews',
   foreignField: 'tour',
   localField: '_id',
 });
-/*
-we need virtual populating because we need access to the reviews in tour too
-we dont know how big the reviews array can be, hence embedding them or even child referencing them will be a wrong decision
-hence we have done parent referencing in the reviews model
-but we still need it here
-the two approaches can be that we make another call to the reviews and fetch the docs/reviews of our particular tour
-or we maintain the child referencing, child referencing is not an optio  n because of the memory issue discussed above
-hence we make another call, but instead of making it manually we use the virtual populate to get the items alright yeah 
-*/
 
-/*
-Mongoose has middlewares, which we can run for specific conditions, like we have middlewares which run for specific paths, there are four types of middlewares in it actually, and what we provide in the functions is the code which is actually run
-so these .pre .post with hooks is run on certain action like save find etc on which to execute
-*/
+//4
 tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true }); //slug is the last part of the url usually used to identify the resource from it alright yeah
   next();
@@ -232,4 +218,30 @@ and we could have implemented it in the response handler itself
 but instead of that we implement it inside the query middleware so that its run everytime we run this query
 and query middlewares are to run a piece of code before the data gets saved 
 and see populate is only to present data in the query its not for presenting data inside the database alright yeah
+*/
+
+/* 1 you can send any other data apart from what is defined in the schema
+but only what is defined in the schema would be the one taken up
+rest will be discarded
+also if there are validation errors which come when a required value is missing
+of the unique property is not satisfied, then we will have errors too
+*/
+
+/* 2 virtual properties are those which are derieved from some other property already stored in the database, and hence we dont save it, rather calculate it this way
+it needs that we allow the schema properties to show virtuals in it alright yeah
+*/
+
+/* 3
+we need virtual populating because we need access to the reviews in tour too
+we dont know how big the reviews array can be, hence embedding them or even child referencing them will be a wrong decision
+hence we have done parent referencing in the reviews model
+but we still need it here
+the two approaches can be that we make another call to the reviews and fetch the docs/reviews of our particular tour
+or we maintain the child referencing, child referencing is not an optio  n because of the memory issue discussed above
+hence we make another call, but instead of making it manually we use the virtual populate to get the items alright yeah 
+*/
+
+/* 4
+Mongoose has middlewares, which we can run for specific conditions, like we have middlewares which run for specific paths, there are four types of middlewares in it actually, and what we provide in the functions is the code which is actually run
+so these .pre .post with hooks is run on certain action like save find etc on which to execute
 */
