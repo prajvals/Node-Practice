@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const tourModel = require('./TourModel');
 
 //review,rating,createdAt,ref to tour,ref to user
 const reviewSchema = new mongoose.Schema(
@@ -38,6 +39,32 @@ const reviewSchema = new mongoose.Schema(
     bufferCommands: false,
   }
 );
+
+reviewSchema.statics.calcAverageRatings = async function (tourId) {
+  const stats = await this.aggregate([
+    {
+      $match: { tour: tourId },
+    },
+    {
+      $group: {
+        _id: '$tour',
+        nRating: { $sum: 1 },
+        avgRating: { $avg: '$rating' },
+      },
+    },
+  ]);
+  console.log(stats);
+  await tourModel.findByIdAndUpdate(tourId, {
+    ratingsAverage: stats[0].avgRating,
+    ratingsQuantity: stats[0].nRating,
+  });
+};
+
+//next can be used with post only when there is atleast one more parameter
+//alone it cannot be used with post
+reviewSchema.post('save', function () {
+  this.constructor.calcAverageRatings(this.tour);
+});
 
 reviewSchema.pre(/^find/, function (next) {
   this.populate({

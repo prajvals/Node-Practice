@@ -78,6 +78,8 @@ app.all('*', (req, res, next) => {
   next(new globalErrorObject("Can't find this particular route", 404));
 });
 
+//when we send next(withAnyParameter inside), its considered as an error, and its handled by the default error handler, but we can handle it ourselves by creating an error handler ourselves
+//this error handler is actually just a middleware with 4 parameters
 app.use(globalErrorHandler);
 
 module.exports = app;
