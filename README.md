@@ -2,7 +2,7 @@
 
 ## What this project is about 
  - This is a full Stack Project for Organising Community Tours
- - It has a web Interface and Node.js Backend Server
+ - It has a web Interface and Node.js Backend Server 
  - Mongo DB database is used 
  - Features Include: 
      - Authentication with JWT
