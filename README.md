@@ -11,5 +11,7 @@
      - Schema of multiple Collections: Users, Tours, Reviews With Child/Parent Referencing
      - Global Error Handling Mechanism is made
      - Use of Router and well modularised Code Base
+     - Nested Routes to perform operations based on the user logged in
+     - Child referencing and Parent Referencing is used too
 
   
