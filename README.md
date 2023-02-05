@@ -1,6 +1,6 @@
 # ThrilloVilla
 
-1. A Fullstack Node.js Project you can organise and sell your tour plans with.
+1. A Fullstack Node.js Project you can organise and sell your tour plans with. 
 
 2. Highly modularised code base with Global Error Handlers, Factory Functions, Resource Separation with Different Routers, with security protocols Implemented.
 
